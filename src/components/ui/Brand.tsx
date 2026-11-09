@@ -1,14 +1,25 @@
 import { cx } from '@/utils/misc';
 
-const LOGO_HEIGHT = { sm: 'h-4', md: 'h-5', lg: 'h-8' } as const;
+const LOGO_HEIGHT = { sm: 'h-4', md: 'h-6', lg: 'h-8' } as const;
 
 /**
- * Logo "35 años Escondida | BHP" (archivo entregado por el cliente en public/).
+ * Logo "35 años Escondida | BHP" (vectorizado desde el archivo del cliente, en public/).
+ * Es SVG para que se vea nítido a cualquier tamaño y densidad de pantalla.
  * tone="color" = naranja corporativo (fondos blancos o negros); tone="white" = sobre la banda naranja.
+ * shrink-0 evita que una fila flex lo comprima y lo deforme.
  */
 export function Wordmark({ tone = 'color', size = 'md', className }: { tone?: 'color' | 'white'; size?: 'sm' | 'md' | 'lg'; className?: string }) {
-  const file = tone === 'white' ? 'escondida-bhp-white.png' : 'escondida-bhp.png';
-  return <img src={`${import.meta.env.BASE_URL}${file}`} alt="Escondida | BHP" className={cx('inline-block w-auto select-none', LOGO_HEIGHT[size], className)} draggable={false} />;
+  const file = tone === 'white' ? 'escondida-bhp-white.svg' : 'escondida-bhp.svg';
+  return (
+    <img
+      src={`${import.meta.env.BASE_URL}${file}`}
+      alt="Escondida | BHP"
+      width={320}
+      height={34}
+      className={cx('inline-block w-auto max-w-none shrink-0 select-none', LOGO_HEIGHT[size], className)}
+      draggable={false}
+    />
+  );
 }
 
 export function FlpMark({ className }: { className?: string }) {

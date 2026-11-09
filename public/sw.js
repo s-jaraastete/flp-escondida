@@ -1,11 +1,11 @@
 /*
  * Service worker de FLP Escondida: permite abrir la app sin señal en faena.
- * - Navegación: red primero; si no hay red, usa la última versión guardada de index.html.
+ * - Navegación (cualquier ruta: /web, /app/visitas…): red primero; si no hay red, usa la última versión guardada de index.html.
  * - Archivos estáticos (JS, CSS, imágenes): caché primero y actualización en segundo plano.
  * Los datos de la demo viven en LocalStorage, así que también están disponibles sin conexión.
  */
-const CACHE = 'flp-escondida-v1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './escondida-bhp.png', './escondida-bhp-white.png', './topo.svg'];
+const CACHE = 'flp-escondida-v2';
+const SHELL = ['./', './index.html', './manifest.webmanifest', './favicon.svg', './icon-192.png', './escondida-bhp.svg', './escondida-bhp-white.svg', './topo.svg'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

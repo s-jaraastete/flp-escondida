@@ -1,4 +1,4 @@
-import { HashRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { DataProvider } from '@/contexts/DataContext';
 import { ConnectivityProvider } from '@/contexts/ConnectivityContext';
@@ -45,7 +45,8 @@ export default function App() {
       <ConnectivityProvider>
       <DataProvider>
         <SessionProvider>
-          <HashRouter>
+          {/* Rutas limpias (/web, /app…) sin "#"; basename respeta BASE_PATH (GitHub Pages bajo /<repositorio>/). */}
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             <TourProvider>
             <DemoBar />
             <Routes>
@@ -103,7 +104,7 @@ export default function App() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </TourProvider>
-          </HashRouter>
+          </BrowserRouter>
         </SessionProvider>
       </DataProvider>
       </ConnectivityProvider>
