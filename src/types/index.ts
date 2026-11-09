@@ -171,6 +171,17 @@ export interface ActionPlan {
   closedAt: string | null;
 }
 
+/** FLP spot: actividad FLP realizada sin reserva previa (no planificada). */
+export interface SpotFlp {
+  id: string;
+  userId: string;
+  projectId: string;
+  activityType: ActivityType;
+  date: string; // yyyy-MM-dd
+  note: string;
+  createdAt: string;
+}
+
 export interface FlpData {
   version: number;
   seededAt: string;
@@ -180,6 +191,7 @@ export interface FlpData {
   bookings: Booking[];
   verifications: Verification[];
   actions: ActionPlan[];
+  spots: SpotFlp[];
 }
 
 export interface Session {

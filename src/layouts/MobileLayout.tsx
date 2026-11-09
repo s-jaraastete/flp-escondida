@@ -8,10 +8,10 @@ import {
   Compass,
   Home,
   Inbox,
-  ListChecks,
   Plus,
   UserRound,
   type LucideIcon,
+  Zap,
 } from 'lucide-react';
 import type { Role } from '@/types';
 import PhoneFrame from './PhoneFrame';
@@ -38,7 +38,7 @@ function useTabs(role: Role, userId: string): Tab[] {
       { to: '/app', label: 'Inicio', icon: Home, end: true },
       { to: '/app/explorar', label: 'Explorar', icon: Compass },
       { to: '/app/visitas', label: 'Visitas', icon: CalendarDays, badge: toVerify },
-      { to: '/app/acciones', label: 'Acciones', icon: ListChecks },
+      { to: '/app/spot', label: 'Spot', icon: Zap },
       { to: '/app/perfil', label: 'Perfil', icon: UserRound },
     ];
   }
@@ -55,7 +55,7 @@ function useTabs(role: Role, userId: string): Tab[] {
     { to: '/app', label: 'Panel', icon: BarChart3, end: true },
     { to: '/app/actividades', label: 'Actividades', icon: ClipboardList },
     { to: '/app/explorar', label: 'Proyectos', icon: Compass },
-    { to: '/app/acciones', label: 'Acciones', icon: ListChecks },
+    { to: '/app/spot', label: 'Spot', icon: Zap },
     { to: '/app/perfil', label: 'Perfil', icon: UserRound },
   ];
 }

@@ -118,7 +118,7 @@ export default function RequestsPage() {
                       </span>
                     </td>
                     <td className="px-3 py-3">
-                      <BookingBadge status={b.status} awaiting={b.awaitingVerification} />
+                      <BookingBadge status={b.status} awaiting={b.awaitingVerification} noShow={b.noShow} />
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex justify-end gap-1.5">

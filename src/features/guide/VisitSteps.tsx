@@ -4,6 +4,7 @@ import { useData } from '@/contexts/DataContext';
 import { awaitingForUser, userBookings } from '@/services/selectors';
 import { todayISO } from '@/utils/date';
 import { cx } from '@/utils/misc';
+import { CheckVisitButton } from '@/features/verification/CheckVisitButton';
 
 interface Step {
   n: number;
@@ -44,11 +45,11 @@ export function VisitSteps({ userId, base, className }: { userId: string; base: 
     },
     {
       n: 3,
-      title: 'Verifica en terreno',
-      text: 'Conversa con el equipo y responde SÍ o NO en el lugar.',
+      title: 'Haz la visita',
+      text: 'Ve a terreno y, al terminar, márcala como realizada.',
       icon: ClipboardCheck,
-      action: 'Verificar ahora',
-      to: toVerify[0] ? (mobile ? `/app/verificar/${toVerify[0].id}` : `/web/verificacion/${toVerify[0].id}`) : mobile ? '/app/visitas' : '/web/mis-visitas',
+      action: 'Marcar como realizada',
+      to: mobile ? '/app/visitas' : '/web/mis-visitas',
     },
     { n: 4, title: 'Regístrala en FLP', text: 'Copia el resumen a FLP y pega aquí el ID.', icon: Send, action: 'Registrar en FLP', to: mobile ? '/app/visitas' : '/web/mis-visitas' },
   ];
@@ -84,7 +85,9 @@ export function VisitSteps({ userId, base, className }: { userId: string; base: 
                 </div>
                 <s.icon className={cx('size-5 shrink-0', isNow ? 'text-brand' : 'text-muted')} aria-hidden />
               </div>
-              {isNow && !waiting && (
+              {isNow && !waiting && s.n === 3 && toVerify[0] ? (
+                <CheckVisitButton size="lg" block className="mt-3" bookingId={toVerify[0].id} userId={userId} />
+              ) : isNow && !waiting && (
                 <Link
                   to={s.to}
                   className="mt-3 flex min-h-12 items-center justify-center rounded-xl bg-brand px-4 text-base font-bold text-white shadow-sm active:scale-[0.98]"

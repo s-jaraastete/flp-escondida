@@ -10,6 +10,7 @@ import { cancelBooking, slotHasStarted } from '@/services/flpService';
 import { userBookings, type BookingView } from '@/services/selectors';
 import { SlotSummary } from '@/features/slots/SlotSummary';
 import { PrecheckEditor } from '@/features/booking/PrecheckEditor';
+import { CheckVisitButton } from '@/features/verification/CheckVisitButton';
 import { capitalize, fmtDateTime, fmtShort, relativeDay, todayISO } from '@/utils/date';
 
 type Tab = 'proximas' | 'verificar' | 'historial';
@@ -26,7 +27,7 @@ export default function MyVisitsPage() {
   const groups: Record<Tab, BookingView[]> = {
     proximas: mine.filter((b) => ['pendiente', 'confirmada'].includes(b.status) && !b.awaitingVerification && b.slot.date >= t),
     verificar: mine.filter((b) => b.awaitingVerification).reverse(),
-    historial: mine.filter((b) => ['completada', 'cancelada', 'rechazada'].includes(b.status) || (b.status === 'pendiente' && b.slot.date < t)).reverse(),
+    historial: mine.filter((b) => ['completada', 'cancelada', 'rechazada'].includes(b.status) || (b.status === 'pendiente' && b.slot.date < t) || b.noShow).reverse(),
   };
   const list = groups[tab];
   const detail = mine.find((b) => b.id === detailId);
@@ -36,7 +37,7 @@ export default function MyVisitsPage() {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-2xl font-extrabold text-ink">Mis visitas FLP</h2>
-          <p className="text-sm text-muted">Reservas, checklist previo, verificaciones e historial.</p>
+          <p className="text-sm text-muted">Reservas, checklist previo, visitas realizadas e historial.</p>
         </div>
         <Segmented<Tab>
           ariaLabel="Mis visitas"
@@ -44,7 +45,7 @@ export default function MyVisitsPage() {
           onChange={setTab}
           options={[
             { value: 'proximas', label: 'Próximas', count: groups.proximas.length },
-            { value: 'verificar', label: 'Por verificar', count: groups.verificar.length },
+            { value: 'verificar', label: 'Por marcar', count: groups.verificar.length },
             { value: 'historial', label: 'Historial', count: groups.historial.length },
           ]}
         />
@@ -54,7 +55,7 @@ export default function MyVisitsPage() {
         <Card>
           <EmptyState
             icon={tab === 'historial' ? History : tab === 'verificar' ? ClipboardCheck : CalendarClock}
-            title={tab === 'proximas' ? 'No tienes visitas próximas' : tab === 'verificar' ? 'No tienes verificaciones pendientes' : 'Aún no tienes historial'}
+            title={tab === 'proximas' ? 'No tienes visitas próximas' : tab === 'verificar' ? 'No tienes visitas por marcar' : 'Aún no tienes historial'}
             action={tab === 'proximas' ? <Button onClick={() => navigate('/web/reservar')}>Reservar visita</Button> : undefined}
           />
         </Card>
@@ -72,7 +73,7 @@ export default function MyVisitsPage() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <BookingBadge status={b.status} awaiting={b.awaitingVerification} />
+                    <BookingBadge status={b.status} awaiting={b.awaitingVerification} noShow={b.noShow} />
                     <TypeBadge type={b.slot.activityType} />
                     <span className="inline-block text-xs first-letter:uppercase text-muted">{relativeDay(b.slot.date)}</span>
                   </div>
@@ -88,7 +89,7 @@ export default function MyVisitsPage() {
                   )}
                   {v && (
                     <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-graphite">
-                      Verificación registrada · cumplimiento <strong>{v.compliance}%</strong>
+                      Visita realizada
                       {v.postVisit?.flpActivityId ? (
                         <span className="rounded-full bg-success-50 px-2 py-0.5 font-mono font-semibold text-success ring-1 ring-success/30">FLP {v.postVisit.flpActivityId}</span>
                       ) : (
@@ -103,9 +104,7 @@ export default function MyVisitsPage() {
                     Detalle
                   </Button>
                   {b.awaitingVerification && (
-                    <Button size="sm" icon={ClipboardCheck} onClick={() => navigate(`/web/verificacion/${b.id}`)}>
-                      Registrar verificación
-                    </Button>
+                    <CheckVisitButton size="sm" bookingId={b.id} userId={user.id} />
                   )}
                   {['pendiente', 'confirmada'].includes(b.status) && !started && (
                     <Button variant="ghost" size="sm" icon={Ban} onClick={() => setCancelId(b.id)}>

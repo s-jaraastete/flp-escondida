@@ -31,8 +31,9 @@ export const BOOKING_STATUS: Record<BookingStatus, { label: string; tone: Tone }
   rechazada: { label: 'Rechazada', tone: 'danger' },
 };
 
-export function BookingBadge({ status, awaiting }: { status: BookingStatus; awaiting?: boolean }) {
-  if (awaiting) return <Badge tone="brand" dot>Por verificar</Badge>;
+export function BookingBadge({ status, awaiting, noShow }: { status: BookingStatus; awaiting?: boolean; noShow?: boolean }) {
+  if (noShow) return <Badge tone="danger" dot>Sin asistencia</Badge>;
+  if (awaiting) return <Badge tone="brand" dot>Por marcar</Badge>;
   const s = BOOKING_STATUS[status];
   return <Badge tone={s.tone} dot>{s.label}</Badge>;
 }

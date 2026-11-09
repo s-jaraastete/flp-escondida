@@ -8,16 +8,15 @@ import {
   FolderKanban,
   Inbox,
   LayoutDashboard,
-  ListChecks,
   LogOut,
   Menu,
   RotateCcw,
   Search,
   Smartphone,
   Users,
-  Workflow,
   X,
   type LucideIcon,
+  Zap,
 } from 'lucide-react';
 import type { Role } from '@/types';
 import { useAuth } from '@/contexts/SessionContext';
@@ -48,10 +47,9 @@ function useNav(role: Role, userId: string): NavItem[] {
       { to: '/web', label: 'Mi dashboard', icon: LayoutDashboard, end: true },
       { to: '/web/reservar', label: 'Reservar visita', icon: CalendarPlus },
       { to: '/web/mis-visitas', label: 'Mis visitas', icon: ClipboardCheck, badge: toVerify },
+      { to: '/web/spot', label: 'FLP spot', icon: Zap },
       { to: '/web/proyectos', label: 'Proyectos', icon: FolderKanban },
       { to: '/web/calendario', label: 'Calendario', icon: CalendarDays },
-      { to: '/web/acciones', label: 'Mis acciones', icon: ListChecks },
-      { to: '/web/flujo', label: 'Flujo FLP', icon: Workflow },
     ];
   }
   const items: NavItem[] = [
@@ -60,10 +58,9 @@ function useNav(role: Role, userId: string): NavItem[] {
     { to: '/web/calendario', label: 'Calendario', icon: CalendarDays },
     { to: '/web/programacion', label: role === 'admin' ? 'Actividades FLP' : 'Programación', icon: CalendarPlus },
     { to: '/web/solicitudes', label: 'Solicitudes', icon: Inbox, badge: pending },
-    { to: '/web/acciones', label: 'Hallazgos y acciones', icon: ListChecks },
+    { to: '/web/spot', label: 'FLP spot', icon: Zap },
   ];
   if (role === 'admin') items.push({ to: '/web/usuarios', label: 'Usuarios y perfiles', icon: Users });
-  items.push({ to: '/web/flujo', label: 'Flujo FLP', icon: Workflow });
   return items;
 }
 
@@ -249,7 +246,7 @@ export default function WebLayout() {
           {/* Banda naranja con curvas de nivel y título de la página */}
           <div className="flp-band h-44 shrink-0 px-4 pt-7 sm:px-6 lg:px-10">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
-            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? (location.pathname.startsWith('/web/verificacion') ? 'Verificación en terreno' : 'FLP Escondida')}</h1>
+            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'FLP Escondida'}</h1>
           </div>
 
           <main className="relative -mt-16 mx-auto w-full max-w-[1400px] flex-1 px-3 pb-8 sm:px-5 lg:px-8">

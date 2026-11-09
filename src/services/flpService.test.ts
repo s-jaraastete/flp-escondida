@@ -3,6 +3,8 @@ import { buildSeed } from '@/data/seed';
 import { VERIFICATION_QUESTIONS } from '@/data/catalogs';
 import {
   bookSlot,
+  checkVisit,
+  registerSpot,
   cancelBooking,
   createSlot,
   decideBooking,
@@ -14,7 +16,7 @@ import {
   slotHasStarted,
   type SlotInput,
 } from './flpService';
-import { kpis } from './selectors';
+import { awaitingForUser, kpis, spotTotals } from './selectors';
 import { addDaysISO, todayISO } from '@/utils/date';
 import type { Answer, FlpData, Slot } from '@/types';
 
@@ -206,5 +208,29 @@ describe('verificación', () => {
     const linked = setFlpActivityId(r.value.data, v.id, 'cco-2026-11-4068392', USER);
     expect(linked.ok).toBe(true);
     if (linked.ok) expect(linked.value.verifications.find((x) => x.id === v.id)?.postVisit?.flpActivityId).toBe('CCO-2026-11-4068392');
+  });
+});
+
+describe('Check de visita y FLP spot', () => {
+  it('marca la visita como realizada con un solo check y no permite repetirlo', () => {
+    const d = buildSeed();
+    const b = awaitingForUser(d, USER)[0];
+    const r = checkVisit(d, b.id, USER);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.value.bookings.find((x) => x.id === b.id)?.status).toBe('completada');
+    expect(r.value.verifications.find((v) => v.bookingId === b.id)?.postVisit?.flpActivityId).toBe('');
+    expect(checkVisit(r.value, b.id, USER).ok).toBe(false);
+    expect(checkVisit(d, b.id, PLANNER).ok).toBe(false);
+  });
+
+  it('registra un FLP spot y rechaza fechas futuras o sin proyecto', () => {
+    const d = buildSeed();
+    const before = spotTotals(d, { userId: USER }).spot;
+    const ok = registerSpot(d, { userId: USER, projectId: d.projects[0].id, activityType: 'CTP', date: todayISO(), note: '' });
+    expect(ok.ok).toBe(true);
+    if (ok.ok) expect(spotTotals(ok.value, { userId: USER }).spot).toBe(before + 1);
+    expect(registerSpot(d, { userId: USER, projectId: '', activityType: 'OVCC', date: todayISO(), note: '' }).ok).toBe(false);
+    expect(registerSpot(d, { userId: USER, projectId: d.projects[0].id, activityType: 'OVCC', date: addDaysISO(todayISO(), 1), note: '' }).ok).toBe(false);
   });
 });

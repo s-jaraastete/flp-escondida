@@ -12,11 +12,11 @@ import {
   Gauge,
   Inbox,
   Info,
-  ListChecks,
   MapPin,
   RotateCcw,
   Target,
   X,
+  Zap,
 } from 'lucide-react';
 import type { Area } from '@/types';
 import { useAuth } from '@/contexts/SessionContext';
@@ -24,15 +24,15 @@ import { useData } from '@/contexts/DataContext';
 import { Button, Card, EmptyState, KpiCard, ProgressBar, SectionTitle, Segmented } from '@/components/ui/primitives';
 import { BookingBadge, TypeBadge, AreaBadge, SeatsBadge } from '@/components/ui/status';
 import { ConfirmDialog, Modal } from '@/components/ui/Modal';
-import { CHART, GroupedBars, HorizontalBars, TrendLine } from '@/components/charts/Charts';
+import { CHART, GroupedBars, TrendLine } from '@/components/charts/Charts';
 import {
-  actionsByStatus,
   alerts,
   areaBreakdown,
   bookingView,
-  findingsByRisk,
   kpis,
   monthlySeries,
+  spotSeries,
+  spotTotals,
   slotView,
   upcomingSlots,
   userBookings,
@@ -61,8 +61,8 @@ function AdminDashboard() {
   const k = useMemo(() => kpis(data, { area }), [data, area]);
   const series = useMemo(() => monthlySeries(data, { area }), [data, area]);
   const byArea = useMemo(() => areaBreakdown(data), [data]);
-  const actionStatus = useMemo(() => actionsByStatus(data, { area }), [data, area]);
-  const findings = useMemo(() => findingsByRisk(data, { area }), [data, area]);
+  const spotS = useMemo(() => spotSeries(data, { area }), [data, area]);
+  const spotT = useMemo(() => spotTotals(data, { area }), [data, area]);
   const alertList = useMemo(() => alerts(data, { area }), [data, area]);
   const next = useMemo(
     () =>
@@ -101,14 +101,7 @@ function AdminDashboard() {
         <KpiCard label="Visitas programadas" value={k.scheduledSlots} icon={CalendarClock} hint={`Ocupación de cupos ${k.occupancyRate}%`} onClick={() => navigate('/web/calendario')} />
         <KpiCard label="Reservas confirmadas" value={k.confirmed} icon={CalendarCheck} tone="petrol" hint={`${k.pending} pendientes de confirmar`} onClick={() => navigate('/web/solicitudes')} />
         <KpiCard label="Visitas completadas" value={k.completed} icon={CheckCircle2} tone="success" hint={`${k.awaitingVerification} pendientes de verificación`} />
-        <KpiCard
-          label="Acciones abiertas"
-          value={k.actionsOpen}
-          icon={ListChecks}
-          tone={k.actionsOverdue ? 'danger' : 'ink'}
-          hint={`${k.actionsOverdue} vencidas · cierre ${k.actionClosure}%`}
-          onClick={() => navigate('/web/acciones')}
-        />
+        <KpiCard label="FLP spot (6 meses)" value={spotT.spot} icon={Zap} tone="ink" hint={`${spotT.spotShare}% de los FLP fueron sin planificar`} onClick={() => navigate('/web/spot')} />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">
@@ -153,7 +146,7 @@ function AdminDashboard() {
                 ['Programadas', a.scheduledSlots],
                 ['Confirmadas', a.confirmed],
                 ['Completadas', a.completed],
-                ['Acciones abiertas', a.actionsOpen],
+                ['FLP spot', spotTotals(data, { area: a.area }).spot],
               ].map(([label, v]) => (
                 <div key={label as string} className="rounded-xl bg-canvas p-2">
                   <dd className="text-xl font-extrabold tabular-nums text-ink">{v}</dd>
@@ -164,7 +157,6 @@ function AdminDashboard() {
             <div className="mt-4 grid gap-3">
               <Meter label="Cumplimiento promedio" value={a.avgCompliance} tone="success" />
               <Meter label="Ocupación de cupos próximos" value={a.occupancyRate} tone="brand" />
-              <Meter label="Cierre de acciones" value={a.actionClosure} tone="petrol" />
             </div>
           </Card>
         ))}
@@ -172,15 +164,23 @@ function AdminDashboard() {
 
       <div className="grid gap-6 xl:grid-cols-3">
         <Card className="p-5">
-          <SectionTitle title="Planes de acción por estado" />
-          <HorizontalBars data={actionStatus} colors={[CHART.warning, CHART.info, CHART.danger, CHART.success]} />
+          <SectionTitle title="FLP planificado vs FLP spot" subtitle={`Spot = sin reserva previa · ${spotT.spotShare}% del total`} action={<Link to="/web/spot" className="text-sm font-semibold text-brand hover:underline">Ver FLP spot</Link>} />
+          <GroupedBars
+            data={spotS}
+            xKey="mes"
+            height={220}
+            series={[
+              { key: 'planificado', name: 'Planificado', color: CHART.s1 },
+              { key: 'spot', name: 'Spot', color: CHART.info },
+            ]}
+          />
         </Card>
         <Card className="p-5">
-          <SectionTitle title="Hallazgos por riesgo material" subtitle="Respuestas NO registradas" />
-          {findings.length ? <HorizontalBars data={findings} color={CHART.s1} /> : <EmptyState compact title="Sin hallazgos" />}
+          <SectionTitle title="Planificado sin asistencia" subtitle={`Reservas confirmadas que no se realizaron · ${spotT.sinAsistencia} (${spotT.noShowRate}%)`} />
+          <GroupedBars data={spotS} xKey="mes" height={220} series={[{ key: 'sinAsistencia', name: 'Sin asistencia', color: CHART.danger }]} />
         </Card>
         <Card className="p-5">
-          <SectionTitle title="Alertas" action={<Link to="/web/acciones" className="text-sm font-semibold text-brand hover:underline">Ver acciones</Link>} />
+          <SectionTitle title="Alertas" />
           <AlertList items={alertList} />
         </Card>
       </div>
@@ -198,7 +198,7 @@ function AdminDashboard() {
           setConfirmReset(false);
         }}
         title="Restablecer datos demo"
-        message="Se regenerarán proyectos, horarios, reservas, verificaciones y acciones con fechas a partir de hoy. Los cambios realizados se perderán."
+        message="Se regenerarán proyectos, horarios, reservas, visitas y FLP spot con fechas a partir de hoy. Los cambios realizados se perderán."
         confirmLabel="Restablecer"
       />
     </div>
@@ -452,8 +452,8 @@ function UserDashboard() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Próximas visitas" value={upcoming.length} icon={CalendarClock} hint={`${upcoming.filter((b) => b.status === 'pendiente').length} pendientes de confirmación`} onClick={() => navigate('/web/mis-visitas')} />
         <KpiCard label="Visitas completadas" value={k.completed} icon={CheckCircle2} tone="success" hint="Histórico de participación" />
-        <KpiCard label="Mi cumplimiento" value={`${k.avgCompliance}%`} icon={Target} tone="petrol" hint={`${k.verifications} verificaciones registradas`} />
-        <KpiCard label="Acciones abiertas" value={k.actionsOpen} icon={ListChecks} tone={k.actionsOverdue ? 'danger' : 'ink'} hint={`${k.actionsOverdue} vencidas`} onClick={() => navigate('/web/acciones')} />
+        <KpiCard label="Mi cumplimiento" value={`${k.avgCompliance}%`} icon={Target} tone="petrol" hint={`${k.verifications} visitas realizadas`} />
+        <KpiCard label="Mis FLP spot" value={(data.spots ?? []).filter((s) => s.userId === user.id).length} icon={Zap} tone="ink" hint="FLP hechos sin reserva" onClick={() => navigate('/web/spot')} />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-3">

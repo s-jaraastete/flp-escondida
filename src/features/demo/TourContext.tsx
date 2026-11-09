@@ -68,8 +68,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
     const oldVer = new Map(before.verifications.map((v) => [v.id, v]));
     if (data.verifications.length > before.verifications.length) mark(5);
     if (data.verifications.some((v) => v.postVisit?.flpActivityId && !oldVer.get(v.id)?.postVisit?.flpActivityId)) mark(6);
-    const oldAct = new Map(before.actions.map((a) => [a.id, a]));
-    if (data.actions.some((a) => a.status === 'cerrada' && oldAct.get(a.id) && oldAct.get(a.id)!.status !== 'cerrada')) mark(9);
+    if ((data.spots ?? []).length > (before.spots ?? []).length) mark(9);
   }, [data, pathname, mark]);
 
   // Ruta + perfil.

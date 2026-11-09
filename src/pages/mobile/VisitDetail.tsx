@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Ban, ClipboardCheck } from 'lucide-react';
+import { Ban, CheckCircle2 } from 'lucide-react';
 import { useData } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/SessionContext';
 import { MobileHeader } from '@/layouts/MobileLayout';
@@ -14,6 +14,7 @@ import { bookingView } from '@/services/selectors';
 import { SlotSummary } from '@/features/slots/SlotSummary';
 import { PrecheckEditor } from '@/features/booking/PrecheckEditor';
 import { FlpRegistryCard } from '@/features/flp/FlpRegistryCard';
+import { CheckVisitButton } from '@/features/verification/CheckVisitButton';
 import { fmtDateTime } from '@/utils/date';
 
 export default function MobileVisitDetail() {
@@ -34,7 +35,7 @@ export default function MobileVisitDetail() {
 
   return (
     <div>
-      <MobileHeader title="Detalle de visita" subtitle={b.slot.project.code} back="/app/visitas" right={<BookingBadge status={b.status} awaiting={b.awaitingVerification} />} />
+      <MobileHeader title="Detalle de visita" subtitle={b.slot.project.code} back="/app/visitas" right={<BookingBadge status={b.status} awaiting={b.awaitingVerification} noShow={b.noShow} />} />
       <div className="px-4 pt-4">
         <div className="card p-4">
           <SlotSummary slot={b.slot} compact />
@@ -43,19 +44,17 @@ export default function MobileVisitDetail() {
 
       {b.awaitingVerification && (
         <div className="px-4 pt-4">
-          <Button size="lg" block icon={ClipboardCheck} onClick={() => navigate(`/app/verificar/${b.id}`)}>
-            Registrar verificación en terreno
-          </Button>
+          <CheckVisitButton size="lg" block bookingId={b.id} userId={user.id} label="Marcar visita como realizada" />
         </div>
       )}
       {v && (
-        <MSection title="Resultado de la verificación">
-          <div className="card p-4">
-            <p className="text-3xl font-extrabold text-ink">{v.compliance}%</p>
-            <p className="text-xs text-muted">Cumplimiento · registrado {fmtDateTime(v.completedAt)}</p>
-            <p className="mt-2 text-sm text-graphite">
-              {v.answers.filter((a) => a.response === 'NO').length} hallazgo(s) · {data.actions.filter((a) => a.verificationId === v.id).length} acción(es)
-            </p>
+        <MSection title="Visita realizada">
+          <div className="card flex items-center gap-3 p-4">
+            <CheckCircle2 className="size-8 shrink-0 text-success" aria-hidden />
+            <div>
+              <p className="font-bold text-ink">Visita marcada como realizada</p>
+              <p className="text-xs text-muted">{fmtDateTime(v.completedAt)}</p>
+            </div>
           </div>
           <FlpRegistryCard verification={v} projectName={data.projects.find((p) => p.id === v.projectId)?.name ?? ''} className="mt-3" />
         </MSection>

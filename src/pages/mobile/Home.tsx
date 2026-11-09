@@ -4,18 +4,18 @@ import { VisitSteps } from '@/features/guide/VisitSteps';
 import { Glossary } from '@/features/guide/Glossary';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { AlertTriangle, Bell, CalendarDays, Check, ClipboardCheck, Clock, Compass, Info, ListChecks, MapPin, X } from 'lucide-react';
+import { AlertTriangle, Bell, CalendarDays, Check, Clock, Compass, Info, MapPin, X, Zap } from 'lucide-react';
 import type { Area } from '@/types';
 import { useAuth } from '@/contexts/SessionContext';
 import { useData } from '@/contexts/DataContext';
-import { Avatar, Button, EmptyState, ProgressBar } from '@/components/ui/primitives';
+import { Avatar, Button, EmptyState } from '@/components/ui/primitives';
 import { TypeBadge } from '@/components/ui/status';
 import { ConfirmDialog } from '@/components/ui/Modal';
-import { CHART, GroupedBars, HorizontalBars } from '@/components/charts/Charts';
+import { CHART, GroupedBars } from '@/components/charts/Charts';
 import { MLink, MSection, SlotCard, StatPill } from '@/components/mobile/MobileKit';
 import { usePhoneContainer } from '@/layouts/PhoneFrame';
 import { decideBooking, ROLE_LABEL } from '@/services/flpService';
-import { actionsByStatus, alerts, awaitingForUser, bookingView, kpis, monthlySeries, slotView, upcomingSlots, userBookings } from '@/services/selectors';
+import { alerts, spotSeries, spotTotals, awaitingForUser, bookingView, kpis, monthlySeries, slotView, upcomingSlots, userBookings } from '@/services/selectors';
 import { capitalize, fmtLong, relativeDay, todayISO } from '@/utils/date';
 import { cx } from '@/utils/misc';
 
@@ -103,21 +103,6 @@ function UserHome() {
         )}
       </Greeting>
 
-      {toVerify.length > 0 && (
-        <div className="px-4 pt-4">
-          <Link to={`/app/verificar/${toVerify[0].id}`} className="flex items-center gap-3 rounded-2xl border border-brand/30 bg-brand-50 p-3.5">
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand text-white">
-              <ClipboardCheck className="size-5" aria-hidden />
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-bold text-ink">Verificación pendiente</p>
-              <p className="truncate text-xs text-graphite">{toVerify[0].slot.project.name} · {relativeDay(toVerify[0].slot.date)}</p>
-            </div>
-            <span className="rounded-full bg-brand px-3 py-1.5 text-xs font-bold text-white">Verificar</span>
-          </Link>
-        </div>
-      )}
-
       <div className="px-4 pt-4">
         <VisitSteps userId={user.id} base="/app" />
       </div>
@@ -125,14 +110,14 @@ function UserHome() {
       <div className="grid grid-cols-3 gap-2.5 px-4 pt-4">
         <StatPill label="Visitas completadas" value={k.completed} tone="success" />
         <StatPill label="Mi cumplimiento" value={`${k.avgCompliance}%`} tone="brand" />
-        <StatPill label="Acciones abiertas" value={k.actionsOpen} tone={k.actionsOverdue ? 'danger' : 'ink'} />
+        <StatPill label="Mis FLP spot" value={(data.spots ?? []).filter((s) => s.userId === user.id).length} tone="ink" />
       </div>
 
       <div className="grid grid-cols-4 gap-2 px-4 pt-4">
         {[
           { to: '/app/explorar', icon: Compass, label: 'Explorar' },
           { to: '/app/visitas', icon: CalendarDays, label: 'Mis visitas' },
-          { to: '/app/acciones', icon: ListChecks, label: 'Acciones' },
+          { to: '/app/spot', icon: Zap, label: 'FLP spot' },
           { to: '/app/perfil', icon: Info, label: 'Mi perfil' },
         ].map((q) => (
           <Link key={q.to} to={q.to} className="flex flex-col items-center gap-1.5 rounded-2xl bg-surface py-3 text-xs font-bold text-graphite ring-1 ring-line active:scale-95">
@@ -268,7 +253,8 @@ function AdminHome() {
   const k = useMemo(() => kpis(data, { area }), [data, area]);
   const series = useMemo(() => monthlySeries(data, { area }).slice(-5), [data, area]);
   const al = useMemo(() => alerts(data, { area }), [data, area]);
-  const st = useMemo(() => actionsByStatus(data, { area }), [data, area]);
+  const spS = useMemo(() => spotSeries(data, { area }).slice(-5), [data, area]);
+  const sp = useMemo(() => spotTotals(data, { area }), [data, area]);
 
   return (
     <div>
@@ -304,8 +290,8 @@ function AdminHome() {
         <StatPill label="Confirmadas próximas" value={k.confirmed} tone="brand" />
         <StatPill label="Completadas" value={k.completed} tone="success" />
         <StatPill label="Pendientes de confirmar" value={k.pending} tone="warning" />
-        <StatPill label="Acciones abiertas" value={k.actionsOpen} />
-        <StatPill label="Acciones vencidas" value={k.actionsOverdue} tone="danger" />
+        <StatPill label="FLP spot (6 meses)" value={sp.spot} />
+        <StatPill label="Planificado sin asistencia" value={sp.sinAsistencia} tone="danger" />
       </div>
 
       <MSection title="Actividad mensual">
@@ -322,7 +308,7 @@ function AdminHome() {
         </div>
       </MSection>
 
-      <MSection title="Alertas" action={<MLink to="/app/acciones">Acciones</MLink>}>
+      <MSection title="Alertas">
         {al.length === 0 ? (
           <EmptyState compact title="Sin alertas" />
         ) : (
@@ -342,16 +328,23 @@ function AdminHome() {
         )}
       </MSection>
 
-      <MSection title="Planes de acción">
+      <MSection title="FLP planificado vs spot" action={<MLink to="/app/spot">Ver spot</MLink>}>
         <div className="card p-3">
-          <HorizontalBars data={st} colors={[CHART.warning, CHART.info, CHART.danger, CHART.success]} />
-          <div className="mt-2">
-            <div className="mb-1 flex justify-between text-xs">
-              <span className="text-graphite">Cierre de acciones</span>
-              <span className="font-bold text-ink">{k.actionClosure}%</span>
-            </div>
-            <ProgressBar value={k.actionClosure} tone="success" label="Cierre de acciones" />
-          </div>
+          <GroupedBars
+            data={spS}
+            xKey="mes"
+            height={200}
+            series={[
+              { key: 'planificado', name: 'Planificado', color: CHART.s1 },
+              { key: 'spot', name: 'Spot', color: CHART.info },
+            ]}
+          />
+        </div>
+      </MSection>
+
+      <MSection title="Planificado sin asistencia">
+        <div className="card p-3">
+          <GroupedBars data={spS} xKey="mes" height={180} series={[{ key: 'sinAsistencia', name: 'Sin asistencia', color: CHART.danger }]} />
         </div>
       </MSection>
     </div>
