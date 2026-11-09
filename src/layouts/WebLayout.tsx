@@ -143,8 +143,12 @@ export default function WebLayout() {
         <span className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden />
         <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Field Leadership Program</span>
         <div className="flex-1" />
-        <DemoBadge className="hidden xl:inline-flex" />
-        <OnlineToggle className="hidden sm:inline-flex" />
+        <span className="hidden xl:contents">
+          <DemoBadge />
+        </span>
+        <span className="hidden sm:contents">
+          <OnlineToggle />
+        </span>
         {role === 'user' && (
           <button
             onClick={() => navigate('/web/reservar')}
