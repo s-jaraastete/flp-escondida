@@ -1,0 +1,20 @@
+# Dependencias y build
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+
+# Entorno / editor
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+*.log
+
+# Material de referencia corporativo: NO versionar (contiene datos personales/confidenciales)
+referencias/
+*.xlsx
+*.xls
+*.docx
+*.pdf
