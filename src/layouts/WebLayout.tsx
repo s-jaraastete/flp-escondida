@@ -94,8 +94,8 @@ export default function WebLayout() {
 
   // Menú lateral estilo FLP: columna oscura angosta con ícono sobre etiqueta.
   const sidebar = (
-    <nav className="scroll-thin flex h-full flex-col overflow-y-auto bg-flp-bar text-white" aria-label="Navegación principal">
-      <p className="px-2 pb-2 pt-4 text-center text-xs font-bold uppercase tracking-[0.18em] text-white/40">{ROLE_LABEL[role]}</p>
+    <nav className="scroll-thin flex h-full flex-col overflow-y-auto overflow-x-hidden bg-flp-bar text-white" aria-label="Navegación principal">
+      <p className="truncate px-1.5 pb-2 pt-4 text-center text-[0.625rem] font-bold uppercase tracking-wide text-white/40">{ROLE_LABEL[role]}</p>
       <ul>
         {nav.map((item) => (
           <li key={item.to} className="border-t border-white/10 last:border-b">
@@ -130,13 +130,13 @@ export default function WebLayout() {
   );
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-[calc(100dvh-var(--demo-h))] flex-col">
       {/* Barra superior oscura (como FLP: marca a la izquierda, usuario a la derecha) */}
       <header className="sticky top-[var(--demo-h)] z-30 flex h-14 shrink-0 items-center gap-3 bg-flp-bar px-4 text-white sm:px-6">
         <button onClick={() => setDrawer(true)} className="rounded-lg p-2 text-white/80 hover:bg-white/10 lg:hidden" aria-label="Abrir menú">
           <Menu className="size-5" />
         </button>
-        <Wordmark size="md" className="h-4 sm:h-5" />
+        <Wordmark size="md" />
         <span className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden />
         <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Field Leadership Program</span>
         <div className="flex-1" />

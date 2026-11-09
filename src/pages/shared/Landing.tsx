@@ -6,7 +6,7 @@ const FLOW = ['Disponibilidad', 'Programación', 'Reserva', 'Confirmación', 'Ac
 
 export default function Landing() {
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-ink text-white">
+    <div className="relative min-h-[calc(100dvh-var(--demo-h))] overflow-hidden bg-ink text-white">
       {/* Fondo: topografía abstracta del rajo */}
       <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.07]" aria-hidden>
         <defs>
@@ -21,28 +21,28 @@ export default function Landing() {
       <div className="pointer-events-none absolute -right-40 -top-40 size-[520px] rounded-full bg-brand/25 blur-[120px]" aria-hidden />
       <div className="pointer-events-none absolute -bottom-48 -left-32 size-[420px] rounded-full bg-petrol/30 blur-[120px]" aria-hidden />
 
-      <div className="relative mx-auto flex min-h-dvh max-w-6xl flex-col px-5 py-6 sm:px-8">
+      <div className="relative mx-auto flex min-h-[calc(100dvh-var(--demo-h))] max-w-6xl flex-col px-5 py-6 sm:px-8">
         <header className="flex items-center justify-between">
           <Wordmark size="md" />
           <DemoBadge />
         </header>
 
-        <main className="flex flex-1 flex-col justify-center py-12">
-          <div className="max-w-3xl">
-            <div className="mb-6 flex items-center gap-3">
-              <FlpMark className="size-11" />
+        <main className="flex flex-1 flex-col justify-center py-6 lg:py-8">
+          <div className="max-w-5xl">
+            <div className="mb-4 flex items-center gap-3">
+              <FlpMark className="size-10" />
               <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/60">Minera Escondida</span>
             </div>
-            <h1 className="wordmark text-5xl leading-none sm:text-7xl">
-              FLP <span className="text-brand">ESCONDIDA</span>
+            <h1 className="text-4xl font-black leading-[1.08] tracking-tight [font-family:var(--font-display)] sm:text-5xl lg:text-[3.25rem]">
+              Sistema de Planificación de Programa de Liderazgo en Terreno <span className="text-brand">(FLP)</span>
             </h1>
             <p className="mt-3 text-xl font-light italic text-white/80 sm:text-2xl">Field Leadership Program</p>
-            <p className="mt-6 max-w-xl text-base text-white/70 sm:text-lg">
+            <p className="mt-4 max-w-xl text-base text-white/70 sm:text-lg">
               Plataforma integrada de planificación, agendamiento y liderazgo en terreno.
             </p>
           </div>
 
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
             <EntryCard
               to="/web/login"
               icon={Monitor}
@@ -70,7 +70,7 @@ export default function Landing() {
             />
           </div>
 
-          <ol className="mt-12 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-white/60" aria-label="Flujo FLP">
+          <ol className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-2 text-xs text-white/60" aria-label="Flujo FLP">
             {FLOW.map((step, i) => (
               <li key={step} className="flex items-center gap-2">
                 <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 font-medium text-white/80">
@@ -113,7 +113,7 @@ function EntryCard({
     <Link
       to={to}
       className={
-        'group relative flex flex-col overflow-hidden rounded-3xl border p-7 transition duration-200 hover:-translate-y-1 ' +
+        'group relative flex flex-col overflow-hidden rounded-3xl border p-6 transition duration-200 hover:-translate-y-1 ' +
         (accent
           ? 'border-brand/50 bg-gradient-to-br from-brand to-brand-700 hover:shadow-[0_20px_60px_rgb(231_85_15/0.35)]'
           : 'border-white/10 bg-white/[0.04] backdrop-blur hover:border-white/25 hover:bg-white/[0.07]')
@@ -125,9 +125,9 @@ function EntryCard({
         </span>
         <span className={'text-xs font-bold uppercase tracking-[0.2em] ' + (accent ? 'text-white/80' : 'text-white/50')}>{eyebrow}</span>
       </div>
-      <h2 className="mt-8 text-2xl font-extrabold">{title}</h2>
+      <h2 className="mt-5 text-2xl font-extrabold">{title}</h2>
       <p className={'mt-2 text-sm leading-relaxed ' + (accent ? 'text-white/85' : 'text-white/65')}>{text}</p>
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-5 flex flex-wrap gap-2">
         {features.map((f) => (
           <span key={f.label} className="inline-flex items-center gap-1.5 rounded-full bg-black/20 px-3 py-1 text-xs font-medium">
             <f.icon className="size-3.5" aria-hidden />
@@ -135,7 +135,7 @@ function EntryCard({
           </span>
         ))}
       </div>
-      <span className="mt-8 inline-flex items-center gap-2 text-sm font-bold">
+      <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold">
         Ingresar <ArrowRight className="size-4 transition group-hover:translate-x-1" aria-hidden />
       </span>
     </Link>

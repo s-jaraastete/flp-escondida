@@ -5,8 +5,8 @@ Un único proyecto React con dos experiencias independientes:
 
 | Experiencia | Ruta | Enfoque |
 |---|---|---|
-| **Plataforma Web** | `#/web` | Administración, planificación, calendario, reservas, dashboards y seguimiento de acciones |
-| **Aplicación Móvil** | `#/app` | Explorar proyectos, reservar visitas, checklist previo, verificación en terreno y acciones |
+| **Plataforma Web** | `/web` | Administración, planificación, calendario, reservas, dashboards y seguimiento de acciones |
+| **Aplicación Móvil** | `/app` | Explorar proyectos, reservar visitas, checklist previo, verificación en terreno y acciones |
 
 > ⚠️ **Modo demostración.** Todos los datos son ficticios. La autenticación es **simulada** (no es un mecanismo de seguridad) y la persistencia es local al navegador (LocalStorage). La carga de evidencias es simulada: solo se registra el nombre del archivo; nada se sube ni se almacena.
 
@@ -80,9 +80,9 @@ Estados de una reserva: `pendiente → confirmada → completada` (al registrar 
 
 ## 5. Mapa de pantallas
 
-**Comunes:** Landing (`#/`), Login web (`#/web/login`), Login móvil (`#/app/login`).
+**Comunes:** Landing (`/`), Login web (`/web/login`), Login móvil (`/app/login`).
 
-**Plataforma Web (`#/web/...`)**
+**Plataforma Web (`/web/...`)**
 
 | Pantalla | Admin | Planif. | Usuario |
 |---|:-:|:-:|:-:|
@@ -98,19 +98,19 @@ Estados de una reserva: `pendiente → confirmada → completada` (al registrar 
 | Usuarios y perfiles (`usuarios`) | ✔ | — | — |
 | Flujo FLP (`flujo`) | ✔ | ✔ | ✔ |
 
-**Aplicación Móvil (`#/app/...`)** — navegación inferior distinta por rol:
+**Aplicación Móvil (`/app/...`)** — navegación inferior distinta por rol:
 
 - **Usuario:** Inicio · Explorar · Detalle de proyecto (selector de días) · Reserva paso a paso (`reservar/:id`) · Mis visitas · Detalle de visita + checklist previo (`visita/:id`) · Verificación (`verificar/:id`) · Acciones · Perfil y estadísticas.
 - **Planificador:** Inicio (solicitudes y agenda de hoy) · Agenda · Publicar / editar disponibilidad (`disponibilidad/nueva`, `disponibilidad/:id`) · Solicitudes (confirmar, rechazar, reprogramar) · Perfil.
 - **Administrador:** Panel ejecutivo con filtro por área, KPIs, gráfico y alertas · Actividades · Proyectos · Acciones · Perfil.
 
-En escritorio la app móvil se muestra dentro de un marco de teléfono centrado (400 px); en un smartphone real ocupa la pantalla completa.
+En escritorio la app móvil se muestra dentro de un marco de teléfono centrado con pantalla de 440 × 956 px CSS (se reduce proporcionalmente si la ventana es más baja); en un smartphone real ocupa la pantalla completa.
 
 ## 6. Arquitectura
 
 ```
 src/
-├─ app/          App (HashRouter, rutas) y guardas de sesión/rol
+├─ app/          App (BrowserRouter, rutas) y guardas de sesión/rol
 ├─ components/   UI reutilizable (botones, badges, modales, KPI), gráficos y kit móvil
 ├─ contexts/     Datos (persistencia + notificaciones), sesiones por experiencia, toasts
 ├─ data/         Catálogos (RM, CC, requisitos, preguntas) y generador de datos demo
@@ -128,7 +128,7 @@ src/
 - **Datos demo** generados con semilla determinística y **fechas relativas a hoy**: ~5 meses de historial y 6 semanas futuras; 14 proyectos (Mina/Coloso), 8 contratistas ficticios, 9 RM y 16 CC.
 - **Persistencia:** LocalStorage (`flp-escondida:data` y `flp-escondida:session:{web|mobile}`).
 
-Stack: React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router (HashRouter) · Lucide · Recharts · date-fns (locale `es`, formato `dd-MM-yyyy`, semana desde el lunes) · Vitest.
+Stack: React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router (BrowserRouter, rutas sin `#`) · Lucide · Recharts · date-fns (locale `es`, formato `dd-MM-yyyy`, semana desde el lunes) · Vitest.
 
 ## 7. Reglas de negocio implementadas
 
@@ -181,7 +181,7 @@ Flujo: trabajar en `test` → validar localmente → Pull Request `test → main
 
 ### Publicación futura en GitHub Pages (no ejecutada)
 
-- La app usa **HashRouter**, así que funciona bajo `https://<usuario>.github.io/<repositorio>/` sin reglas de reescritura.
+- La app usa rutas limpias (sin `#`). Como GitHub Pages no tiene reglas de reescritura, el workflow copia `index.html` a `404.html` para que cualquier ruta abra la app. En Vercel, `vercel.json` reescribe todas las rutas a `index.html`. Los enlaces antiguos con `#/` se redirigen solos a la ruta limpia.
 - `vite.config.ts` lee `BASE_PATH` (por defecto `/`). El workflow `.github/workflows/deploy-pages.yml` compila con `BASE_PATH=/<repositorio>/` y despliega **solo desde `main`**.
 - `.github/workflows/ci.yml` ejecuta typecheck, pruebas y build en `test` y en Pull Requests, sin desplegar.
 - Pasos cuando se apruebe la publicación: crear el repositorio remoto, `git remote add origin …`, `git push -u origin main test`, y en *Settings → Pages* elegir **GitHub Actions** como fuente.

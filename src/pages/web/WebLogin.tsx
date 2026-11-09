@@ -9,7 +9,7 @@ import { cx } from '@/utils/misc';
 export default function WebLogin() {
   const f = useDemoLogin('web');
   return (
-    <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
+    <div className="grid min-h-[calc(100dvh-var(--demo-h))] lg:grid-cols-[1.05fr_1fr]">
       {/* Panel de marca */}
       <aside className="relative hidden overflow-hidden bg-ink p-10 text-white lg:flex lg:flex-col">
         <div className="pointer-events-none absolute -right-24 top-1/3 size-96 rounded-full bg-brand/30 blur-[110px]" aria-hidden />
