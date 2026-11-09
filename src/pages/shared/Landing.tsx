@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
-import { ArrowRight, BarChart3, CalendarDays, CheckCircle2, ClipboardCheck, Monitor, Smartphone, Users } from 'lucide-react';
+import { ArrowRight, BarChart3, CalendarDays, CheckCircle2, Monitor, Smartphone, Users, Zap } from 'lucide-react';
 import { DemoBadge, FlpMark, Wordmark } from '@/components/ui/Brand';
 
-const FLOW = ['Disponibilidad', 'Programación', 'Reserva', 'Confirmación', 'Actividad FLP', 'Verificación', 'Acciones', 'Seguimiento'];
+const FLOW = ['Programación', 'Reserva', 'Confirmación', 'Visita realizada', 'Registro en FLP', 'FLP spot', 'Reportes'];
 
 export default function Landing() {
   return (
@@ -63,8 +63,8 @@ export default function Landing() {
               text="Explora proyectos, reserva visitas, revisa requisitos, marca tus visitas y registra FLP spot desde terreno."
               features={[
                 { icon: CalendarDays, label: 'Reservas' },
-                { icon: ClipboardCheck, label: 'Verificación' },
-                { icon: CheckCircle2, label: 'Acciones' },
+                { icon: CheckCircle2, label: 'Visita realizada' },
+                { icon: Zap, label: 'FLP spot' },
               ]}
               accent
             />
