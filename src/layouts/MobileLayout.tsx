@@ -80,7 +80,7 @@ export default function MobileLayout() {
         {tabs.map((t) =>
           t.fab ? (
             <NavLink key={t.to} to={t.to} className="flex flex-col items-center" aria-label={t.label}>
-              <span className="-mt-6 grid size-14 place-items-center rounded-2xl bg-brand text-white shadow-[0_10px_24px_rgb(241_90_36/0.45)] ring-4 ring-surface">
+              <span className="-mt-6 grid size-14 place-items-center rounded-2xl bg-brand text-white shadow-[0_10px_24px_rgb(231_85_15/0.45)] ring-4 ring-surface">
                 <t.icon className="size-6" aria-hidden />
               </span>
               <span className="mt-0.5 text-[10px] font-semibold text-graphite">{t.label}</span>
@@ -131,7 +131,7 @@ export function MobileHeader({
 }) {
   const navigate = useNavigate();
   return (
-    <header className="sticky top-0 z-10 bg-ink px-4 pb-4 pt-3 text-white">
+    <header className="flp-band sticky top-0 z-10 px-4 pb-4 pt-3 text-white">
       <div className="flex min-h-10 items-center gap-2">
         {back && (
           <button
@@ -143,7 +143,7 @@ export function MobileHeader({
           </button>
         )}
         <div className="min-w-0 flex-1">
-          {subtitle && <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-white/50">{subtitle}</p>}
+          {subtitle && <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-white/80">{subtitle}</p>}
           <h1 className="truncate text-lg font-extrabold">{title}</h1>
         </div>
         {right}

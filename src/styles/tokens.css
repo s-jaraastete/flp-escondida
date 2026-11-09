@@ -5,11 +5,15 @@
  */
 @theme {
   /* Marca */
-  --color-brand: #f15a24;          /* Naranja corporativo */
-  --color-brand-600: #d9481a;
-  --color-brand-700: #b83a12;
-  --color-brand-50: #fff3ee;
-  --color-brand-100: #ffe1d4;
+  --color-brand: #e7550f;          /* Naranja corporativo (logo Escondida | BHP) */
+  --color-brand-600: #cf4b0c;
+  --color-brand-700: #a93d09;
+  --color-brand-50: #fdf1ea;
+  --color-brand-100: #fadcc9;
+
+  /* Estilo FLP (flex.bhp.com) */
+  --color-flp-bar: #2a2a2a;        /* Barra superior y menú lateral */
+  --color-flp-band: #d4692a;       /* Banda naranja con textura topográfica */
 
   /* Neutros */
   --color-ink: #111111;            /* Negro */
@@ -33,7 +37,7 @@
   --color-petrol-50: #e8f4f6;
 
   /* Series de gráficos (validadas para daltonismo y contraste sobre blanco) */
-  --color-chart-1: #f15a24;        /* serie 1: naranja corporativo */
+  --color-chart-1: #e7550f;        /* serie 1: naranja corporativo */
   --color-chart-2: #2a78d6;        /* serie 2: azul */
   --color-chart-grid: #e8eaee;
 

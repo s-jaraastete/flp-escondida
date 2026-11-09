@@ -23,6 +23,13 @@
       focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none disabled:bg-canvas disabled:text-muted;
   }
   .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-graphite; }
+  /* Banda naranja con curvas de nivel, como el header de FLP */
+  .flp-band {
+    background-color: var(--color-flp-band);
+    background-image: url('/topo.svg'), linear-gradient(180deg, #d9702f 0%, #c85d20 100%);
+    background-size: cover, auto;
+    background-position: center;
+  }
   .wordmark { font-family: var(--font-display); letter-spacing: 0.04em; font-weight: 900; }
 }
 

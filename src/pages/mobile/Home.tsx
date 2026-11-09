@@ -1,3 +1,4 @@
+import { Wordmark } from '@/components/ui/Brand';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { AlertTriangle, Bell, CalendarDays, Check, ClipboardCheck, Clock, Compass, Info, ListChecks, MapPin, X } from 'lucide-react';
@@ -26,19 +27,20 @@ function Greeting({ alertsCount = 0, children }: { alertsCount?: number; childre
   const { user, role } = useAuth('mobile');
   const navigate = useNavigate();
   return (
-    <header className="bg-ink px-4 pb-6 pt-4 text-white">
+    <header className="flp-band px-4 pb-6 pt-4 text-white">
+      <Wordmark tone="white" size="sm" className="mb-3" />
       <div className="flex items-center gap-3">
         <Avatar name={user.name} />
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/50">{ROLE_LABEL[role]} · FLP Escondida</p>
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/80">{ROLE_LABEL[role]} · FLP Escondida</p>
           <p className="truncate text-lg font-extrabold">Hola, {user.name.split(' ')[0]}</p>
         </div>
-        <button onClick={() => navigate('/app/perfil')} className="relative grid size-10 place-items-center rounded-full bg-white/10" aria-label={`Notificaciones: ${alertsCount}`}>
+        <button onClick={() => navigate('/app/perfil')} className="relative grid size-10 place-items-center rounded-full bg-black/15" aria-label={`Notificaciones: ${alertsCount}`}>
           <Bell className="size-5" />
-          {alertsCount > 0 && <span className="absolute right-1.5 top-1.5 size-2.5 rounded-full bg-brand ring-2 ring-ink" aria-hidden />}
+          {alertsCount > 0 && <span className="absolute right-1.5 top-1.5 size-2.5 rounded-full bg-brand ring-2 ring-white" aria-hidden />}
         </button>
       </div>
-      <p className="mt-1 pl-12 text-xs first-letter:uppercase text-white/50">{fmtLong(todayISO())}</p>
+      <p className="mt-1 pl-12 text-xs first-letter:uppercase text-white/80">{fmtLong(todayISO())}</p>
       {children}
     </header>
   );
@@ -66,7 +68,7 @@ function UserHome() {
     <div>
       <Greeting alertsCount={toVerify.length}>
         {next ? (
-          <Link to={`/app/visita/${next.id}`} className="mt-4 block rounded-2xl bg-gradient-to-br from-brand to-brand-700 p-4 shadow-[0_12px_30px_rgb(241_90_36/0.35)]">
+          <Link to={`/app/visita/${next.id}`} className="mt-4 block rounded-2xl bg-gradient-to-br from-brand to-brand-700 p-4 shadow-[0_12px_30px_rgb(231_85_15/0.35)]">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold uppercase tracking-widest text-white/80">Próxima visita</span>
               <span className="inline-block rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-bold first-letter:uppercase">{next.status}</span>

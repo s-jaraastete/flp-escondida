@@ -24,17 +24,17 @@ export default function MobileProfile() {
 
   return (
     <div>
-      <header className="bg-ink px-4 pb-8 pt-6 text-center text-white">
+      <header className="flp-band px-4 pb-8 pt-6 text-center text-white">
         <div className="flex justify-center">
           <Avatar name={user.name} size="lg" />
         </div>
         <p className="mt-3 text-xl font-extrabold">{user.name}</p>
-        <p className="text-sm text-white/60">{user.position}</p>
+        <p className="text-sm text-white/85">{user.position}</p>
         <div className="mt-2 flex justify-center gap-2">
           <Badge>{ROLE_LABEL[role]}</Badge>
           <DemoBadgeInline />
         </div>
-        <p className="mt-2 text-xs text-white/50">{user.email}</p>
+        <p className="mt-2 text-xs text-white/80">{user.email}</p>
       </header>
 
       {role === 'user' ? (

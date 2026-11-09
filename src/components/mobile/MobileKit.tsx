@@ -80,7 +80,7 @@ export function DayStrip({ value, onChange, days = 21, marks }: { value: string;
             onClick={() => onChange(iso)}
             className={cx(
               'flex w-14 shrink-0 flex-col items-center rounded-2xl py-2 transition',
-              active ? 'bg-brand text-white shadow-[0_6px_16px_rgb(241_90_36/0.35)]' : 'bg-white/10 text-white',
+              active ? 'bg-brand text-white shadow-[0_6px_16px_rgb(231_85_15/0.35)]' : 'bg-white/10 text-white',
             )}
             aria-label={`${format(d, "EEEE d 'de' MMMM", { locale })}, ${n} horarios`}
           >
