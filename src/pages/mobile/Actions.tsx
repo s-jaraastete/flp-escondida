@@ -64,11 +64,11 @@ export default function MobileActions() {
             <article key={a.id} className="card p-4">
               <div className="flex items-center justify-between gap-2">
                 <ActionBadge action={a} />
-                <span className={isOverdue(a) ? 'text-[11px] font-bold text-danger' : 'text-[11px] text-muted'}>
+                <span className={isOverdue(a) ? 'text-xs font-bold text-danger' : 'text-xs text-muted'}>
                   {a.status === 'cerrada' ? 'Cerrada' : d < 0 ? `Venció hace ${-d} d` : d === 0 ? 'Vence hoy' : `Vence en ${d} d`}
                 </span>
               </div>
-              <p className="mt-2 text-[11px] font-bold uppercase tracking-wide text-muted">{p?.name}</p>
+              <p className="mt-2 text-xs font-bold uppercase tracking-wide text-muted">{p?.name}</p>
               <p className="mt-1 line-clamp-2 text-sm font-semibold text-ink">{a.description}</p>
               <p className="mt-1 line-clamp-2 text-xs text-graphite">Hallazgo: {a.finding}</p>
               <p className="mt-2 text-xs text-muted">

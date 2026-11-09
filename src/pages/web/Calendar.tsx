@@ -184,7 +184,7 @@ function WeekGrid({ days, byDay, mySlots, onOpen }: { days: Date[]; byDay: Map<s
         <div className="grid grid-cols-[56px_repeat(7,1fr)]">
           <div>
             {hours.map((h) => (
-              <div key={h} style={{ height: HOUR_PX }} className="pr-2 text-right text-[11px] text-muted">
+              <div key={h} style={{ height: HOUR_PX }} className="pr-2 text-right text-xs text-muted">
                 {String(h).padStart(2, '0')}:00
               </div>
             ))}
@@ -218,12 +218,12 @@ function WeekGrid({ days, byDay, mySlots, onOpen }: { days: Date[]; byDay: Map<s
                       style={{ top, height, left: `calc(${(lane / n) * 100}% + 3px)`, width: `calc(${100 / n}% - 6px)` }}
                       aria-label={`${s.activityType} ${s.project.name} ${s.start} a ${s.end}, ${s.seats} cupos`}
                     >
-                      <p className="truncate text-[11px] font-bold">
+                      <p className="truncate text-xs font-bold">
                         {s.start} · {s.activityType}
                       </p>
-                      <p className="truncate text-[11px] opacity-90">{s.project.name}</p>
+                      <p className="truncate text-xs opacity-90">{s.project.name}</p>
                       {height > 60 && (
-                        <p className="truncate text-[10px] opacity-75">
+                        <p className="truncate text-xs opacity-75">
                           {s.occupied}/{s.capacity} · {s.project.area}
                         </p>
                       )}
@@ -281,12 +281,12 @@ function MonthGrid({
                 </button>
                 <div className="grid gap-1">
                   {list.slice(0, 3).map((s) => (
-                    <button key={s.id} onClick={() => onOpen(s.id)} className={cx('truncate px-1.5 py-0.5 text-[11px] font-semibold', eventCls(s, mySlots.has(s.id)))}>
+                    <button key={s.id} onClick={() => onOpen(s.id)} className={cx('truncate px-1.5 py-0.5 text-xs font-semibold', eventCls(s, mySlots.has(s.id)))}>
                       {s.start} {s.project.name}
                     </button>
                   ))}
                   {list.length > 3 && (
-                    <button onClick={() => onDay(d)} className="text-left text-[11px] font-semibold text-brand hover:underline">
+                    <button onClick={() => onDay(d)} className="text-left text-xs font-semibold text-brand hover:underline">
                       +{list.length - 3} más
                     </button>
                   )}

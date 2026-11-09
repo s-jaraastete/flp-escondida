@@ -23,7 +23,7 @@ export function FlpMark({ className }: { className?: string }) {
 
 export function DemoBadge({ className }: { className?: string }) {
   return (
-    <span className={cx('inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-warning ring-1 ring-warning/30', className)}>
+    <span className={cx('inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-warning ring-1 ring-warning/30', className)}>
       Modo demo
     </span>
   );

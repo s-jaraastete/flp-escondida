@@ -8,6 +8,7 @@ import { ConfirmDialog } from '@/components/ui/Modal';
 import { cx } from '@/utils/misc';
 import { ROLE_SHORT, TOUR_FLOWS, type TourFlow } from './tour';
 import { useTour } from './TourContext';
+import { TextSizeToggle } from '@/features/a11y/TextSize';
 
 const ROLES: Role[] = ['admin', 'planner', 'user'];
 
@@ -55,9 +56,9 @@ export function DemoBar() {
       <div
         role="region"
         aria-label="Controles de demostración"
-        className="sticky top-0 z-[60] flex h-[var(--demo-h)] items-center gap-1.5 overflow-x-auto bg-[#141414] px-2 sm:gap-2 sm:px-3 text-[13px] text-white no-scrollbar"
+        className="sticky top-0 z-[60] flex h-[var(--demo-h)] items-center gap-1.5 overflow-x-auto bg-[#141414] px-2 sm:gap-2 sm:px-3 text-xs text-white no-scrollbar"
       >
-        <span className="shrink-0 rounded bg-amber-400 px-1.5 py-1 text-[10px] font-extrabold uppercase leading-none tracking-wider text-black">Demo</span>
+        <span className="shrink-0 rounded bg-amber-400 px-1.5 py-1 text-xs font-extrabold uppercase leading-none tracking-wider text-black">Demo</span>
 
         <div className="flex shrink-0 rounded-lg bg-white/10 p-0.5" role="group" aria-label="Experiencia">
           {(['web', 'mobile'] as const).map((e) => (
@@ -90,6 +91,8 @@ export function DemoBar() {
 
         <span className="hidden min-w-0 flex-1 truncate text-white/50 lg:block">Selector demostrativo, sin inicio de sesión real · datos ficticios</span>
         <span className="flex-1 lg:hidden" />
+
+        <TextSizeToggle dark />
 
         <button
           onClick={() => setGuide(true)}
@@ -131,7 +134,7 @@ export function DemoBar() {
                   <li key={f.id} className="grid grid-cols-[28px_1fr_auto] items-start gap-3 border-b border-line py-3">
                     <span
                       className={cx(
-                        'grid size-6 place-items-center rounded-full border-2 text-[11px] font-bold',
+                        'grid size-6 place-items-center rounded-full border-2 text-xs font-bold',
                         ok ? 'border-success bg-success text-white' : 'border-line text-muted',
                       )}
                     >
@@ -140,7 +143,7 @@ export function DemoBar() {
                     <div className="min-w-0">
                       <p className={cx('text-sm font-bold text-ink', ok && 'text-muted line-through decoration-muted/60')}>{f.title}</p>
                       <p className="text-xs text-muted">{f.hint}</p>
-                      <p className="mt-1 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide text-brand-700">
+                      <p className="mt-1 flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-brand-700">
                         {f.experience === 'web' ? <Monitor className="size-3" aria-hidden /> : <Smartphone className="size-3" aria-hidden />}
                         {ROLE_SHORT[f.role]} · {f.experience === 'web' ? 'Web' : 'Móvil'}
                       </p>

@@ -3,6 +3,7 @@ import { useData } from '@/contexts/DataContext';
 import { Card, SectionTitle } from '@/components/ui/primitives';
 import { isOverdue } from '@/services/selectors';
 import { todayISO } from '@/utils/date';
+import { Glossary } from '@/features/guide/Glossary';
 
 export default function FlowPage() {
   const { data } = useData();
@@ -60,6 +61,7 @@ export default function FlowPage() {
           ))}
         </div>
       </Card>
+      <Glossary open />
     </div>
   );
 }

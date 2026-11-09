@@ -98,7 +98,7 @@ export default function WebLayout() {
   // Menú lateral estilo FLP: columna oscura angosta con ícono sobre etiqueta.
   const sidebar = (
     <nav className="scroll-thin flex h-full flex-col overflow-y-auto bg-flp-bar text-white" aria-label="Navegación principal">
-      <p className="px-2 pb-2 pt-4 text-center text-[9px] font-bold uppercase tracking-[0.18em] text-white/40">{ROLE_LABEL[role]}</p>
+      <p className="px-2 pb-2 pt-4 text-center text-xs font-bold uppercase tracking-[0.18em] text-white/40">{ROLE_LABEL[role]}</p>
       <ul>
         {nav.map((item) => (
           <li key={item.to} className="border-t border-white/10 last:border-b">
@@ -107,7 +107,7 @@ export default function WebLayout() {
               end={item.end}
               className={({ isActive }) =>
                 cx(
-                  'relative flex flex-col items-center gap-1.5 px-2 py-4 text-center text-[12px] font-medium leading-tight transition',
+                  'relative flex flex-col items-center gap-1.5 px-2 py-4 text-center text-xs font-medium leading-tight transition',
                   isActive ? 'bg-black/35 text-white' : 'text-white/75 hover:bg-white/5 hover:text-white',
                 )
               }
@@ -118,7 +118,7 @@ export default function WebLayout() {
                   <item.icon className={cx('size-7 shrink-0', isActive && 'text-brand')} strokeWidth={1.8} aria-hidden />
                   <span>{item.label}</span>
                   {!!item.badge && (
-                    <span className="absolute right-3 top-2.5 min-w-5 rounded-full bg-brand px-1.5 py-0.5 text-center text-[10px] font-bold tabular-nums text-white">
+                    <span className="absolute right-3 top-2.5 min-w-5 rounded-full bg-brand px-1.5 py-0.5 text-center text-xs font-bold tabular-nums text-white">
                       {item.badge}
                     </span>
                   )}
@@ -128,7 +128,7 @@ export default function WebLayout() {
           </li>
         ))}
       </ul>
-      <p className="mt-auto px-3 py-4 text-center text-[10px] leading-snug text-white/35">Prototipo con datos ficticios</p>
+      <p className="mt-auto px-3 py-4 text-center text-xs leading-snug text-white/35">Prototipo con datos ficticios</p>
     </nav>
   );
 
@@ -177,7 +177,7 @@ export default function WebLayout() {
                 <p className="text-sm font-semibold text-ink">{user.name}</p>
                 <p className="text-xs text-muted">{user.email}</p>
               </div>
-              <p className="mt-1 px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-widest text-muted">Cambiar de perfil</p>
+              <p className="mt-1 px-3 pb-1 pt-2 text-xs font-bold uppercase tracking-widest text-muted">Cambiar de perfil</p>
               {ROLE_OPTIONS.map((o) => (
                 <button
                   key={o.role}
@@ -248,7 +248,7 @@ export default function WebLayout() {
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Banda naranja con curvas de nivel y título de la página */}
           <div className="flp-band h-44 shrink-0 px-4 pt-7 sm:px-6 lg:px-10">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
             <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? (location.pathname.startsWith('/web/verificacion') ? 'Verificación en terreno' : 'FLP Escondida')}</h1>
           </div>
 

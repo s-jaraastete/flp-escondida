@@ -74,7 +74,7 @@ export default function MobileExplore() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
                   <AreaBadge area={p.area} />
-                  <span className="text-[11px] font-bold text-muted">{p.code}</span>
+                  <span className="text-xs font-bold text-muted">{p.code}</span>
                 </div>
                 <p className="mt-1.5 font-bold leading-snug text-ink">{p.name}</p>
                 <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-muted">

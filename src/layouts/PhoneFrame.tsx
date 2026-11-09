@@ -44,7 +44,7 @@ export default function PhoneFrame({ children, scroll = true }: { children: Reac
         className="relative isolate mx-auto flex h-[calc(100dvh-var(--demo-h))] w-full flex-col overflow-hidden bg-canvas md:mx-0 md:h-[min(880px,calc(100dvh-48px-var(--demo-h)))] md:w-[400px] md:rounded-[3rem] md:border-[10px] md:border-ink md:shadow-[0_30px_80px_rgb(0_0_0/0.5),0_0_0_2px_#3a3c42]"
       >
         {/* Barra de estado simulada (solo marco de escritorio) */}
-        <div className="relative hidden h-8 shrink-0 items-center justify-between bg-ink px-7 text-[11px] font-semibold text-white md:flex" aria-hidden>
+        <div className="relative hidden h-8 shrink-0 items-center justify-between bg-ink px-7 text-xs font-semibold text-white md:flex" aria-hidden>
           <span>{time}</span>
           <span className="absolute left-1/2 top-1.5 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
           <span className="flex items-center gap-1">

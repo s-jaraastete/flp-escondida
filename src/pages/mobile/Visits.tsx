@@ -54,7 +54,7 @@ export default function MobileVisits() {
         {list.map((b) => (
           <Link key={b.id} to={b.awaitingVerification ? `/app/verificar/${b.id}` : `/app/visita/${b.id}`} className="card flex items-center gap-3 p-3.5 active:scale-[0.99]">
             <div className="w-14 shrink-0 text-center">
-              <p className="text-[11px] font-bold first-letter:uppercase text-muted">{relativeDay(b.slot.date)}</p>
+              <p className="text-xs font-bold first-letter:uppercase text-muted">{relativeDay(b.slot.date)}</p>
               <p className="text-lg font-extrabold text-ink">{b.slot.start}</p>
             </div>
             <div className="min-w-0 flex-1">

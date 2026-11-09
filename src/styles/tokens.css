@@ -23,7 +23,7 @@
   --color-surface: #ffffff;        /* Blanco */
   --color-canvas: #f4f5f7;         /* Gris claro */
   --color-line: #e3e5e9;
-  --color-muted: #6b7280;
+  --color-muted: #4b5563;          /* Gris de apoyo (contraste ≥ 7:1 sobre blanco) */
   --color-graphite: #374151;       /* Gris oscuro */
 
   /* Estados */
@@ -40,6 +40,14 @@
   --color-chart-1: #e7550f;        /* serie 1: naranja corporativo */
   --color-chart-2: #2a78d6;        /* serie 2: azul */
   --color-chart-grid: #e8eaee;
+
+  /* Escala de texto un punto más grande que la de Tailwind: lectura cómoda en terreno */
+  --text-xs: 0.8125rem;            /* 13 px */
+  --text-xs--line-height: 1.15rem;
+  --text-sm: 0.9375rem;            /* 15 px */
+  --text-sm--line-height: 1.4rem;
+  --text-base: 1.0625rem;          /* 17 px */
+  --text-base--line-height: 1.6rem;
 
   /* Tipografía */
   --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;

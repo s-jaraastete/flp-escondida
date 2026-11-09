@@ -85,7 +85,7 @@ export default function MobileLayout() {
               <span className="-mt-6 grid size-14 place-items-center rounded-2xl bg-brand text-white shadow-[0_10px_24px_rgb(231_85_15/0.45)] ring-4 ring-surface">
                 <t.icon className="size-6" aria-hidden />
               </span>
-              <span className="mt-0.5 text-[10px] font-semibold text-graphite">{t.label}</span>
+              <span className="mt-0.5 text-xs font-semibold text-graphite">{t.label}</span>
             </NavLink>
           ) : (
             <NavLink
@@ -93,7 +93,7 @@ export default function MobileLayout() {
               to={t.to}
               end={t.end}
               className={({ isActive }) =>
-                cx('relative flex flex-col items-center gap-0.5 rounded-xl py-1.5 text-[10px] font-semibold transition', isActive ? 'text-brand' : 'text-muted')
+                cx('relative flex flex-col items-center gap-0.5 rounded-xl py-1.5 text-xs font-semibold transition', isActive ? 'text-brand' : 'text-muted')
               }
             >
               {({ isActive }) => (
@@ -103,7 +103,7 @@ export default function MobileLayout() {
                   </span>
                   {t.label}
                   {!!t.badge && (
-                    <span className="absolute right-2 top-0.5 min-w-4 rounded-full bg-brand px-1 text-center text-[9px] font-bold leading-4 text-white">
+                    <span className="absolute right-2 top-0.5 min-w-4 rounded-full bg-brand px-1 text-center text-xs font-bold leading-4 text-white">
                       {t.badge}
                     </span>
                   )}
@@ -145,7 +145,7 @@ export function MobileHeader({
           </button>
         )}
         <div className="min-w-0 flex-1">
-          {subtitle && <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-white/80">{subtitle}</p>}
+          {subtitle && <p className="truncate text-xs font-semibold uppercase tracking-widest text-white/80">{subtitle}</p>}
           <h1 className="truncate text-lg font-extrabold">{title}</h1>
         </div>
         {right}

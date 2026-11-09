@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import {
   AlertTriangle,
-  ArrowRight,
   CalendarCheck,
   CalendarClock,
   CalendarPlus,
@@ -37,12 +36,12 @@ import {
   slotView,
   upcomingSlots,
   userBookings,
-  awaitingForUser,
 } from '@/services/selectors';
 import { decideBooking } from '@/services/flpService';
 import { SlotForm } from '@/features/slots/SlotForm';
 import { BookingDialog } from '@/features/booking/BookingDialog';
 import { capitalize, fmtLong, fmtShort, relativeDay, todayISO, addDaysISO } from '@/utils/date';
+import { VisitSteps } from '@/features/guide/VisitSteps';
 import { cx } from '@/utils/misc';
 
 export default function WebDashboard() {
@@ -158,7 +157,7 @@ function AdminDashboard() {
               ].map(([label, v]) => (
                 <div key={label as string} className="rounded-xl bg-canvas p-2">
                   <dd className="text-xl font-extrabold tabular-nums text-ink">{v}</dd>
-                  <dt className="text-[11px] leading-tight text-muted">{label}</dt>
+                  <dt className="text-xs leading-tight text-muted">{label}</dt>
                 </div>
               ))}
             </dl>
@@ -427,7 +426,6 @@ function UserDashboard() {
   const mine = userBookings(data, user.id);
   const t = todayISO();
   const upcoming = mine.filter((b) => ['pendiente', 'confirmada'].includes(b.status) && b.slot.date >= t);
-  const toVerify = awaitingForUser(data, user.id);
   const k = kpis(data, { userId: user.id });
   const series = monthlySeries(data, { userId: user.id });
   const next = upcoming[0];
@@ -449,22 +447,7 @@ function UserDashboard() {
         </Button>
       </div>
 
-      {toVerify.length > 0 && (
-        <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-brand/30 bg-brand-50 p-4">
-          <span className="grid size-11 place-items-center rounded-xl bg-brand text-white">
-            <ClipboardCheck className="size-5" aria-hidden />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="font-bold text-ink">Tienes {toVerify.length} visita(s) por verificar</p>
-            <p className="text-sm text-graphite">
-              {toVerify[0].slot.project.name} · {relativeDay(toVerify[0].slot.date)} {toVerify[0].slot.start}
-            </p>
-          </div>
-          <Button onClick={() => navigate(`/web/verificacion/${toVerify[0].id}`)} icon={ArrowRight}>
-            Registrar verificación
-          </Button>
-        </div>
-      )}
+      <VisitSteps userId={user.id} base="/web" />
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Próximas visitas" value={upcoming.length} icon={CalendarClock} hint={`${upcoming.filter((b) => b.status === 'pendiente').length} pendientes de confirmación`} onClick={() => navigate('/web/mis-visitas')} />

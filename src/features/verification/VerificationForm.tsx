@@ -5,6 +5,7 @@ import { ACTION_OWNERS, ACTIVITY_TYPES, ENGAGEMENT_QUESTIONS, EVENT_PROPOSALS, V
 import { AnswerToggle, Button, ProgressBar } from '@/components/ui/primitives';
 import { TypeBadge } from '@/components/ui/status';
 import { useData } from '@/contexts/DataContext';
+import { Glossary } from '@/features/guide/Glossary';
 import { FLP_ID_PATTERN, submitVerification, validateVerification, type ActionDraft } from '@/services/flpService';
 import type { BookingView } from '@/services/selectors';
 import { addDaysISO, capitalize, fmtLong, todayISO } from '@/utils/date';
@@ -111,6 +112,8 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
         </div>
       </section>
 
+      <Glossary />
+
       {/* Las 3 preguntas de engagement de FLP */}
       <section className="card border-brand/30 bg-brand-50/40 p-4">
         <p className="flex items-center gap-2 text-sm font-bold text-brand-700">
@@ -120,7 +123,7 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
         <ol className="mt-2 grid gap-1.5 text-sm font-medium text-ink">
           {ENGAGEMENT_QUESTIONS.map((q, i) => (
             <li key={q} className="flex gap-2">
-              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand text-[11px] font-bold text-white">{i + 1}</span>
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand text-xs font-bold text-white">{i + 1}</span>
               {q}
             </li>
           ))}
@@ -302,7 +305,7 @@ function EvidencePicker({ files, onChange }: { files: string[]; onChange: (f: st
         <span className="flex items-center gap-1.5">
           <Paperclip className="size-4" aria-hidden /> <span className="font-semibold text-petrol">Seleccionar archivos</span> (no obligatorio)
         </span>
-        <span className="text-[11px] italic text-muted">No incluyas datos personales (nombres, RUT). Prototipo: solo se registra el nombre del archivo.</span>
+        <span className="text-xs italic text-muted">No incluyas datos personales (nombres, RUT). Prototipo: solo se registra el nombre del archivo.</span>
       </button>
       <input
         ref={inputRef}

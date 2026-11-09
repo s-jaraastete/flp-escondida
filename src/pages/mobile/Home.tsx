@@ -1,5 +1,7 @@
 import { Wordmark } from '@/components/ui/Brand';
 import { OnlineToggle } from '@/features/offline/ConnectivityUI';
+import { VisitSteps } from '@/features/guide/VisitSteps';
+import { Glossary } from '@/features/guide/Glossary';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { AlertTriangle, Bell, CalendarDays, Check, ClipboardCheck, Clock, Compass, Info, ListChecks, MapPin, X } from 'lucide-react';
@@ -36,7 +38,7 @@ function Greeting({ alertsCount = 0, children }: { alertsCount?: number; childre
       <div className="flex items-center gap-3">
         <Avatar name={user.name} />
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/80">{ROLE_LABEL[role]} · FLP Escondida</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-white/80">{ROLE_LABEL[role]} · FLP Escondida</p>
           <p className="truncate text-lg font-extrabold">Hola, {user.name.split(' ')[0]}</p>
         </div>
         <button onClick={() => navigate('/app/perfil')} className="relative grid size-10 place-items-center rounded-full bg-black/15" aria-label={`Notificaciones: ${alertsCount}`}>
@@ -74,8 +76,8 @@ function UserHome() {
         {next ? (
           <Link to={`/app/visita/${next.id}`} className="mt-4 block rounded-2xl bg-gradient-to-br from-brand to-brand-700 p-4 shadow-[0_12px_30px_rgb(231_85_15/0.35)]">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-widest text-white/80">Próxima visita</span>
-              <span className="inline-block rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-bold first-letter:uppercase">{next.status}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-white/80">Próxima visita</span>
+              <span className="inline-block rounded-full bg-white/20 px-2 py-0.5 text-xs font-bold first-letter:uppercase">{next.status}</span>
             </div>
             <p className="mt-2 text-xl font-extrabold first-letter:uppercase">
               {relativeDay(next.slot.date)} · {next.slot.start}
@@ -88,7 +90,7 @@ function UserHome() {
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/25">
                 <div className="h-full rounded-full bg-white" style={{ width: `${(next.checklist.length / Math.max(1, next.slot.requirements.length)) * 100}%` }} />
               </div>
-              <span className="text-[11px] font-bold">
+              <span className="text-xs font-bold">
                 {next.checklist.length}/{next.slot.requirements.length} requisitos
               </span>
             </div>
@@ -116,6 +118,10 @@ function UserHome() {
         </div>
       )}
 
+      <div className="px-4 pt-4">
+        <VisitSteps userId={user.id} base="/app" />
+      </div>
+
       <div className="grid grid-cols-3 gap-2.5 px-4 pt-4">
         <StatPill label="Visitas completadas" value={k.completed} tone="success" />
         <StatPill label="Mi cumplimiento" value={`${k.avgCompliance}%`} tone="brand" />
@@ -129,7 +135,7 @@ function UserHome() {
           { to: '/app/acciones', icon: ListChecks, label: 'Acciones' },
           { to: '/app/perfil', icon: Info, label: 'Mi perfil' },
         ].map((q) => (
-          <Link key={q.to} to={q.to} className="flex flex-col items-center gap-1.5 rounded-2xl bg-surface py-3 text-[11px] font-bold text-graphite ring-1 ring-line active:scale-95">
+          <Link key={q.to} to={q.to} className="flex flex-col items-center gap-1.5 rounded-2xl bg-surface py-3 text-xs font-bold text-graphite ring-1 ring-line active:scale-95">
             <q.icon className="size-5 text-brand" aria-hidden />
             {q.label}
           </Link>
@@ -147,6 +153,10 @@ function UserHome() {
           <EmptyState compact title="Sin horarios disponibles" />
         )}
       </MSection>
+
+      <div className="px-4 pt-4">
+        <Glossary />
+      </div>
     </div>
   );
 }
@@ -177,7 +187,7 @@ function PlannerHome() {
           ].map(([l, v]) => (
             <div key={l as string} className="rounded-2xl bg-white/10 p-3">
               <p className="text-2xl font-extrabold tabular-nums">{v}</p>
-              <p className="text-[11px] text-white/60">{l}</p>
+              <p className="text-xs text-white/60">{l}</p>
             </div>
           ))}
         </div>
@@ -229,7 +239,7 @@ function PlannerHome() {
         ) : (
           <div className="grid gap-2.5">
             {todaySlots.map((s) => (
-              <SlotCard key={s.id} slot={s} to={`/app/disponibilidad/${s.id}`} right={<span className="text-[11px] font-bold text-graphite">{s.occupied}/{s.capacity} inscritos</span>} />
+              <SlotCard key={s.id} slot={s} to={`/app/disponibilidad/${s.id}`} right={<span className="text-xs font-bold text-graphite">{s.occupied}/{s.capacity} inscritos</span>} />
             ))}
           </div>
         )}
@@ -281,7 +291,7 @@ function AdminHome() {
           </div>
           <div className="mt-3 flex items-end gap-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-white/50">Cumplimiento promedio</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Cumplimiento promedio</p>
               <p className="text-4xl font-extrabold tabular-nums">{k.avgCompliance}%</p>
             </div>
             <p className="pb-1.5 text-xs text-white/60">{k.verifications} verificaciones</p>

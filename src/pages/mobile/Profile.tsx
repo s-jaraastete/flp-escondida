@@ -13,6 +13,7 @@ import { kpis, monthlySeries } from '@/services/selectors';
 import { ROLE_OPTIONS } from '@/features/auth/useDemoLogin';
 import { cx } from '@/utils/misc';
 import { OnlineToggle } from '@/features/offline/ConnectivityUI';
+import { TextSizeToggle } from '@/features/a11y/TextSize';
 import { useConnectivity } from '@/contexts/ConnectivityContext';
 
 export default function MobileProfile() {
@@ -120,7 +121,7 @@ export default function MobileProfile() {
             Cerrar sesión
           </Button>
         </div>
-        <p className="mt-4 text-center text-[11px] text-muted">FLP Escondida · prototipo v0.1 · datos ficticios guardados en este dispositivo</p>
+        <p className="mt-4 text-center text-xs text-muted">FLP Escondida · prototipo v0.1 · datos ficticios guardados en este dispositivo</p>
       </MSection>
 
       <ConfirmDialog
@@ -151,7 +152,14 @@ function DemoBadgeInline() {
 function ConnectionSection() {
   const { online, outbox, syncing } = useConnectivity();
   return (
-    <MSection title="Conexión y sincronización">
+    <MSection title="Lectura y conexión">
+      <div className="card mb-3 flex items-center justify-between gap-3 p-4">
+        <div>
+          <p className="text-sm font-semibold text-ink">Tamaño de letra</p>
+          <p className="text-xs text-muted">A+ agranda toda la app.</p>
+        </div>
+        <TextSizeToggle className="text-base" />
+      </div>
       <div className="card p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
