@@ -30,7 +30,7 @@ export default function PhoneFrame({ children, scroll = true }: { children: Reac
           <Smartphone className="size-5" aria-hidden />
           <span className="text-xs font-bold uppercase tracking-[0.2em]">Vista móvil</span>
         </div>
-        <p className="mt-3 text-2xl font-extrabold leading-tight">Aplicación móvil FLP Escondida</p>
+        <p className="mt-3 text-2xl font-extrabold leading-tight">Aplicación móvil FLP Planner</p>
         <p className="mt-3 text-sm text-white/60">
           Estás viendo la app en un marco de teléfono. En un smartphone real se muestra a pantalla completa.
         </p>

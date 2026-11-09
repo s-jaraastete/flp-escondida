@@ -121,7 +121,7 @@ export default function MobileProfile() {
             Cerrar sesión
           </Button>
         </div>
-        <p className="mt-4 text-center text-xs text-muted">FLP Escondida · prototipo v0.1 · datos ficticios guardados en este dispositivo</p>
+        <p className="mt-4 text-center text-xs text-muted">FLP Planner · prototipo v0.1 · datos ficticios guardados en este dispositivo</p>
       </MSection>
 
       <ConfirmDialog

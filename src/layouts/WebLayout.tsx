@@ -138,7 +138,7 @@ export default function WebLayout() {
         </button>
         <Wordmark size="md" className="h-4 sm:h-5" />
         <span className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden />
-        <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Field Leadership Program</span>
+        <span className="hidden truncate text-sm font-medium text-white/80 sm:block">FLP Planner</span>
         <div className="flex-1" />
         <span className="hidden xl:contents">
           <DemoBadge />
@@ -245,8 +245,8 @@ export default function WebLayout() {
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Banda naranja con curvas de nivel y título de la página */}
           <div className="flp-band h-44 shrink-0 px-4 pt-7 sm:px-6 lg:px-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
-            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'FLP Escondida'}</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">FLP Planner · Escondida</p>
+            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'FLP Planner'}</h1>
           </div>
 
           <main className="relative -mt-16 mx-auto w-full max-w-[1400px] flex-1 px-3 pb-8 sm:px-5 lg:px-8">

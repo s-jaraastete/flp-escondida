@@ -34,7 +34,7 @@ export default function Landing() {
               <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/60">Minera Escondida</span>
             </div>
             <h1 className="wordmark text-5xl leading-none sm:text-7xl">
-              FLP <span className="text-brand">ESCONDIDA</span>
+              FLP <span className="text-brand">PLANNER</span>
             </h1>
             <p className="mt-3 text-xl font-light italic text-white/80 sm:text-2xl">Field Leadership Program</p>
             <p className="mt-6 max-w-xl text-base text-white/70 sm:text-lg">
@@ -48,7 +48,7 @@ export default function Landing() {
               icon={Monitor}
               eyebrow="Escritorio"
               title="Ingresar a Plataforma Web"
-              text="Administración, planificación de visitas, calendario, reservas, dashboards y seguimiento de planes de acción."
+              text="Administración, planificación de visitas, calendario, reservas, dashboards de FLP planificado, spot y ausencias."
               features={[
                 { icon: BarChart3, label: 'Dashboards' },
                 { icon: CalendarDays, label: 'Calendario' },
@@ -60,7 +60,7 @@ export default function Landing() {
               icon={Smartphone}
               eyebrow="Terreno"
               title="Ingresar a Aplicación Móvil"
-              text="Explora proyectos, reserva visitas, revisa requisitos y registra verificaciones y hallazgos desde terreno."
+              text="Explora proyectos, reserva visitas, revisa requisitos, marca tus visitas y registra FLP spot desde terreno."
               features={[
                 { icon: CalendarDays, label: 'Reservas' },
                 { icon: ClipboardCheck, label: 'Verificación' },

@@ -38,7 +38,7 @@ function Greeting({ alertsCount = 0, children }: { alertsCount?: number; childre
       <div className="flex items-center gap-3">
         <Avatar name={user.name} />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-widest text-white/80">{ROLE_LABEL[role]} · FLP Escondida</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-white/80">{ROLE_LABEL[role]} · FLP Planner</p>
           <p className="truncate text-lg font-extrabold">Hola, {user.name.split(' ')[0]}</p>
         </div>
         <button onClick={() => navigate('/app/perfil')} className="relative grid size-10 place-items-center rounded-full bg-black/15" aria-label={`Notificaciones: ${alertsCount}`}>
