@@ -20,7 +20,7 @@ export default function PhoneFrame({ children, scroll = true }: { children: Reac
   }, []);
 
   return (
-    <div className="min-h-dvh bg-canvas md:flex md:items-center md:justify-center md:gap-12 md:bg-[radial-gradient(circle_at_30%_20%,#2a2c31,#111111_60%)] md:py-6">
+    <div className="min-h-[calc(100dvh-var(--demo-h))] bg-canvas md:flex md:items-center md:justify-center md:gap-12 md:bg-[radial-gradient(circle_at_30%_20%,#2a2c31,#111111_60%)] md:py-6">
       {/* Panel lateral solo en escritorio */}
       <aside className="hidden max-w-64 text-white lg:block">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-white/60 hover:text-white">
@@ -41,7 +41,7 @@ export default function PhoneFrame({ children, scroll = true }: { children: Reac
 
       <div
         ref={setEl}
-        className="relative isolate mx-auto flex h-dvh w-full flex-col overflow-hidden bg-canvas md:mx-0 md:h-[min(880px,calc(100dvh-48px))] md:w-[400px] md:rounded-[3rem] md:border-[10px] md:border-ink md:shadow-[0_30px_80px_rgb(0_0_0/0.5),0_0_0_2px_#3a3c42]"
+        className="relative isolate mx-auto flex h-[calc(100dvh-var(--demo-h))] w-full flex-col overflow-hidden bg-canvas md:mx-0 md:h-[min(880px,calc(100dvh-48px-var(--demo-h)))] md:w-[400px] md:rounded-[3rem] md:border-[10px] md:border-ink md:shadow-[0_30px_80px_rgb(0_0_0/0.5),0_0_0_2px_#3a3c42]"
       >
         {/* Barra de estado simulada (solo marco de escritorio) */}
         <div className="relative hidden h-8 shrink-0 items-center justify-between bg-ink px-7 text-[11px] font-semibold text-white md:flex" aria-hidden>

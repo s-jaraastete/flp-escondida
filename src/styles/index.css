@@ -3,6 +3,8 @@
 
 @layer base {
   html { -webkit-tap-highlight-color: transparent; }
+  /* Alto de la franja de demostración (DemoBar); los encabezados fijos se ubican debajo. */
+  :root { --demo-h: 2.5rem; }
   body {
     @apply bg-canvas text-ink antialiased;
     font-family: var(--font-sans);

@@ -135,7 +135,7 @@ export default function WebLayout() {
   return (
     <div className="flex min-h-dvh flex-col">
       {/* Barra superior oscura (como FLP: marca a la izquierda, usuario a la derecha) */}
-      <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 bg-flp-bar px-4 text-white sm:px-6">
+      <header className="sticky top-[var(--demo-h)] z-30 flex h-14 shrink-0 items-center gap-3 bg-flp-bar px-4 text-white sm:px-6">
         <button onClick={() => setDrawer(true)} className="rounded-lg p-2 text-white/80 hover:bg-white/10 lg:hidden" aria-label="Abrir menú">
           <Menu className="size-5" />
         </button>
@@ -226,11 +226,11 @@ export default function WebLayout() {
         </div>
       </header>
 
-      <ConnectivityBanner className="sticky top-14 z-20" />
+      <ConnectivityBanner className="sticky top-[calc(var(--demo-h)+3.5rem)] z-20" />
 
       <div className="flex flex-1">
         <aside className="hidden w-[112px] shrink-0 bg-flp-bar lg:block">
-          <div className="sticky top-14 h-[calc(100dvh-3.5rem)]">{sidebar}</div>
+          <div className="sticky top-[calc(var(--demo-h)+3.5rem)] h-[calc(100dvh-3.5rem-var(--demo-h))]">{sidebar}</div>
         </aside>
 
         {drawer && (

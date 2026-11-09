@@ -3,6 +3,8 @@ import { ToastProvider } from '@/contexts/ToastContext';
 import { DataProvider } from '@/contexts/DataContext';
 import { ConnectivityProvider } from '@/contexts/ConnectivityContext';
 import { SessionProvider } from '@/contexts/SessionContext';
+import { TourProvider } from '@/features/demo/TourContext';
+import { DemoBar } from '@/features/demo/DemoBar';
 import { RequireAuth, RoleGate } from './guards';
 import Landing from '@/pages/shared/Landing';
 import WebLogin from '@/pages/web/WebLogin';
@@ -47,6 +49,8 @@ export default function App() {
       <DataProvider>
         <SessionProvider>
           <HashRouter>
+            <TourProvider>
+            <DemoBar />
             <Routes>
               <Route path="/" element={<Landing />} />
 
@@ -104,6 +108,7 @@ export default function App() {
 
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+          </TourProvider>
           </HashRouter>
         </SessionProvider>
       </DataProvider>
