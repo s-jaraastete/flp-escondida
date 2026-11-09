@@ -45,7 +45,7 @@ export function Modal({
   if (!open) return null;
   const inPhone = Boolean(container);
   const node = (
-    <div className={cx(inPhone ? 'absolute' : 'fixed', 'inset-0 z-50 flex items-end justify-center sm:items-center', !inPhone && 'sm:p-6')}>
+    <div className={cx(inPhone ? 'absolute' : 'fixed', 'inset-0 z-[80] flex items-end justify-center sm:items-center', !inPhone && 'sm:p-6')}>
       <div className="animate-fade absolute inset-0 bg-ink/50 backdrop-blur-[2px]" onClick={onClose} aria-hidden />
       <div
         ref={panelRef}

@@ -178,7 +178,7 @@ export function Avatar({ name, size = 'md', tone = 'brand' }: { name: string; si
       className={cx(
         'grid shrink-0 place-items-center rounded-full font-bold',
         tone === 'brand' ? 'bg-brand text-white' : 'bg-ink text-white',
-        size === 'sm' && 'size-7 text-[11px]',
+        size === 'sm' && 'size-7 text-xs',
         size === 'md' && 'size-9 text-xs',
         size === 'lg' && 'size-14 text-lg',
       )}

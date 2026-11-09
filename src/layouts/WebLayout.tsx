@@ -8,23 +8,23 @@ import {
   FolderKanban,
   Inbox,
   LayoutDashboard,
-  ListChecks,
   LogOut,
   Menu,
   RotateCcw,
   Search,
   Smartphone,
   Users,
-  Workflow,
   X,
   type LucideIcon,
+  Zap,
 } from 'lucide-react';
 import type { Role } from '@/types';
 import { useAuth } from '@/contexts/SessionContext';
 import { useData } from '@/contexts/DataContext';
 import { Avatar } from '@/components/ui/primitives';
 import { ConfirmDialog } from '@/components/ui/Modal';
-import { DemoBadge, FlpMark, Wordmark } from '@/components/ui/Brand';
+import { DemoBadge, Wordmark } from '@/components/ui/Brand';
+import { ConnectivityBanner, OnlineToggle } from '@/features/offline/ConnectivityUI';
 import { ROLE_LABEL } from '@/services/flpService';
 import { userBookings } from '@/services/selectors';
 import { ROLE_OPTIONS } from '@/features/auth/useDemoLogin';
@@ -47,10 +47,9 @@ function useNav(role: Role, userId: string): NavItem[] {
       { to: '/web', label: 'Mi dashboard', icon: LayoutDashboard, end: true },
       { to: '/web/reservar', label: 'Reservar visita', icon: CalendarPlus },
       { to: '/web/mis-visitas', label: 'Mis visitas', icon: ClipboardCheck, badge: toVerify },
+      { to: '/web/spot', label: 'FLP spot', icon: Zap },
       { to: '/web/proyectos', label: 'Proyectos', icon: FolderKanban },
       { to: '/web/calendario', label: 'Calendario', icon: CalendarDays },
-      { to: '/web/acciones', label: 'Mis acciones', icon: ListChecks },
-      { to: '/web/flujo', label: 'Flujo FLP', icon: Workflow },
     ];
   }
   const items: NavItem[] = [
@@ -59,10 +58,9 @@ function useNav(role: Role, userId: string): NavItem[] {
     { to: '/web/calendario', label: 'Calendario', icon: CalendarDays },
     { to: '/web/programacion', label: role === 'admin' ? 'Actividades FLP' : 'Programación', icon: CalendarPlus },
     { to: '/web/solicitudes', label: 'Solicitudes', icon: Inbox, badge: pending },
-    { to: '/web/acciones', label: 'Hallazgos y acciones', icon: ListChecks },
+    { to: '/web/spot', label: 'FLP spot', icon: Zap },
   ];
   if (role === 'admin') items.push({ to: '/web/usuarios', label: 'Usuarios y perfiles', icon: Users });
-  items.push({ to: '/web/flujo', label: 'Flujo FLP', icon: Workflow });
   return items;
 }
 
@@ -94,157 +92,169 @@ export default function WebLayout() {
 
   const current = nav.find((n) => (n.end ? location.pathname === n.to : location.pathname.startsWith(n.to)));
 
+  // Menú lateral estilo FLP: columna oscura angosta con ícono sobre etiqueta.
   const sidebar = (
-    <div className="flex h-full flex-col bg-ink text-white">
-      <div className="flex items-center gap-3 px-5 py-5">
-        <FlpMark />
-        <div className="leading-tight">
-          <p className="wordmark text-sm">FLP ESCONDIDA</p>
-          <p className="text-[11px] text-white/50">Field Leadership Program</p>
-        </div>
-      </div>
-      <p className="px-5 pb-2 pt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/35">{ROLE_LABEL[role]}</p>
-      <nav className="scroll-thin flex-1 overflow-y-auto px-3" aria-label="Navegación principal">
-        <ul className="grid gap-1">
-          {nav.map((item) => (
-            <li key={item.to}>
-              <NavLink
-                to={item.to}
-                end={item.end}
-                className={({ isActive }) =>
-                  cx(
-                    'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
-                    isActive ? 'bg-brand text-white shadow-[0_6px_20px_rgb(241_90_36/0.35)]' : 'text-white/70 hover:bg-white/5 hover:text-white',
-                  )
-                }
-              >
-                <item.icon className="size-[18px] shrink-0" aria-hidden />
-                <span className="flex-1">{item.label}</span>
-                {!!item.badge && (
-                  <span className="min-w-5 rounded-full bg-white/15 px-1.5 py-0.5 text-center text-[11px] font-bold tabular-nums group-[.active]:bg-white/25">
-                    {item.badge}
-                  </span>
-                )}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
-      <div className="m-3 rounded-2xl bg-white/5 p-4">
-        <Wordmark size="sm" />
-        <p className="mt-2 text-[11px] leading-relaxed text-white/45">Prototipo con datos ficticios. Persistencia local en este navegador.</p>
-      </div>
-    </div>
+    <nav className="scroll-thin flex h-full flex-col overflow-y-auto bg-flp-bar text-white" aria-label="Navegación principal">
+      <p className="px-2 pb-2 pt-4 text-center text-xs font-bold uppercase tracking-[0.18em] text-white/40">{ROLE_LABEL[role]}</p>
+      <ul>
+        {nav.map((item) => (
+          <li key={item.to} className="border-t border-white/10 last:border-b">
+            <NavLink
+              to={item.to}
+              end={item.end}
+              className={({ isActive }) =>
+                cx(
+                  'relative flex flex-col items-center gap-1.5 px-2 py-4 text-center text-xs font-medium leading-tight transition',
+                  isActive ? 'bg-black/35 text-white' : 'text-white/75 hover:bg-white/5 hover:text-white',
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  {isActive && <span className="absolute inset-y-0 left-0 w-1 bg-brand" aria-hidden />}
+                  <item.icon className={cx('size-7 shrink-0', isActive && 'text-brand')} strokeWidth={1.8} aria-hidden />
+                  <span>{item.label}</span>
+                  {!!item.badge && (
+                    <span className="absolute right-3 top-2.5 min-w-5 rounded-full bg-brand px-1.5 py-0.5 text-center text-xs font-bold tabular-nums text-white">
+                      {item.badge}
+                    </span>
+                  )}
+                </>
+              )}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-auto px-3 py-4 text-center text-xs leading-snug text-white/35">Prototipo con datos ficticios</p>
+    </nav>
   );
 
   return (
-    <div className="min-h-dvh lg:grid lg:grid-cols-[260px_1fr]">
-      <aside className="hidden bg-ink lg:block">
-        <div className="sticky top-0 h-dvh">{sidebar}</div>
-      </aside>
-
-      {drawer && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="animate-fade absolute inset-0 bg-ink/60" onClick={() => setDrawer(false)} aria-hidden />
-          <div className="animate-pop relative h-full w-72">
-            {sidebar}
-            <button onClick={() => setDrawer(false)} className="absolute right-3 top-5 rounded-lg p-1.5 text-white/70 hover:bg-white/10" aria-label="Cerrar menú">
-              <X className="size-5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="flex min-w-0 flex-col">
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-line bg-surface/90 px-4 backdrop-blur sm:px-6">
-          <button onClick={() => setDrawer(true)} className="rounded-lg p-2 text-graphite hover:bg-canvas lg:hidden" aria-label="Abrir menú">
-            <Menu className="size-5" />
+    <div className="flex min-h-dvh flex-col">
+      {/* Barra superior oscura (como FLP: marca a la izquierda, usuario a la derecha) */}
+      <header className="sticky top-[var(--demo-h)] z-30 flex h-14 shrink-0 items-center gap-3 bg-flp-bar px-4 text-white sm:px-6">
+        <button onClick={() => setDrawer(true)} className="rounded-lg p-2 text-white/80 hover:bg-white/10 lg:hidden" aria-label="Abrir menú">
+          <Menu className="size-5" />
+        </button>
+        <Wordmark size="md" className="h-4 sm:h-5" />
+        <span className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden />
+        <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Field Leadership Program</span>
+        <div className="flex-1" />
+        <span className="hidden xl:contents">
+          <DemoBadge />
+        </span>
+        <span className="hidden sm:contents">
+          <OnlineToggle />
+        </span>
+        {role === 'user' && (
+          <button
+            onClick={() => navigate('/web/reservar')}
+            className="hidden items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 text-sm text-white/80 hover:bg-white/15 hover:text-white md:inline-flex"
+          >
+            <Search className="size-4" aria-hidden /> Buscar proyecto u horario
           </button>
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-[11px] font-semibold uppercase tracking-widest text-muted">Plataforma FLP Escondida</p>
-            <h1 className="truncate text-base font-bold text-ink">{current?.label ?? 'FLP Escondida'}</h1>
-          </div>
-          <DemoBadge className="hidden sm:inline-flex" />
-          {role === 'user' && (
-            <button
-              onClick={() => navigate('/web/reservar')}
-              className="hidden items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm text-muted hover:border-brand/40 hover:text-ink md:inline-flex"
-            >
-              <Search className="size-4" aria-hidden /> Buscar proyecto u horario
-            </button>
-          )}
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setMenu((m) => !m)}
-              className="flex items-center gap-2.5 rounded-xl p-1.5 pr-2 hover:bg-canvas"
-              aria-haspopup="menu"
-              aria-expanded={menu}
-            >
-              <Avatar name={user.name} />
-              <span className="hidden text-left leading-tight sm:block">
-                <span className="block text-sm font-semibold text-ink">{user.name}</span>
-                <span className="block text-xs text-muted">{ROLE_LABEL[role]}</span>
-              </span>
-              <ChevronDown className="size-4 text-muted" aria-hidden />
-            </button>
-            {menu && (
-              <div role="menu" className="animate-pop absolute right-0 top-full z-40 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 shadow-[var(--shadow-pop)]">
-                <div className="px-3 py-2">
-                  <p className="text-sm font-semibold text-ink">{user.name}</p>
-                  <p className="text-xs text-muted">{user.email}</p>
-                </div>
-                <p className="mt-1 px-3 pb-1 pt-2 text-[10px] font-bold uppercase tracking-widest text-muted">Cambiar de perfil</p>
-                {ROLE_OPTIONS.map((o) => (
-                  <button
-                    key={o.role}
-                    role="menuitemradio"
-                    aria-checked={o.role === role}
-                    onClick={() => {
-                      setMenu(false);
-                      if (o.role !== role) {
-                        switchRole(o.role);
-                        navigate('/web');
-                      }
-                    }}
-                    className={cx('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm', o.role === role ? 'bg-brand-50 font-semibold text-brand-700' : 'text-graphite hover:bg-canvas')}
-                  >
-                    <o.icon className="size-4" aria-hidden /> {o.label}
-                  </button>
-                ))}
-                <div className="my-2 h-px bg-line" />
-                <button role="menuitem" onClick={() => navigate('/app')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-graphite hover:bg-canvas">
-                  <Smartphone className="size-4" aria-hidden /> Abrir aplicación móvil
+        )}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenu((m) => !m)}
+            className="flex items-center gap-2.5 rounded-xl p-1.5 pr-2 hover:bg-white/10"
+            aria-haspopup="menu"
+            aria-expanded={menu}
+          >
+            <Avatar name={user.name} />
+            <span className="hidden text-left leading-tight sm:block">
+              <span className="block text-sm font-semibold text-white">{user.name}</span>
+              <span className="block text-xs text-white/60">{ROLE_LABEL[role]}</span>
+            </span>
+            <ChevronDown className="size-4 text-white/60" aria-hidden />
+          </button>
+          {menu && (
+            <div role="menu" className="animate-pop absolute right-0 top-full z-40 mt-2 w-72 rounded-2xl border border-line bg-surface p-2 shadow-[var(--shadow-pop)]">
+              <div className="px-3 py-2">
+                <p className="text-sm font-semibold text-ink">{user.name}</p>
+                <p className="text-xs text-muted">{user.email}</p>
+              </div>
+              <p className="mt-1 px-3 pb-1 pt-2 text-xs font-bold uppercase tracking-widest text-muted">Cambiar de perfil</p>
+              {ROLE_OPTIONS.map((o) => (
+                <button
+                  key={o.role}
+                  role="menuitemradio"
+                  aria-checked={o.role === role}
+                  onClick={() => {
+                    setMenu(false);
+                    if (o.role !== role) {
+                      switchRole(o.role);
+                      navigate('/web');
+                    }
+                  }}
+                  className={cx('flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm', o.role === role ? 'bg-brand-50 font-semibold text-brand-700' : 'text-graphite hover:bg-canvas')}
+                >
+                  <o.icon className="size-4" aria-hidden /> {o.label}
                 </button>
-                {role === 'admin' && (
-                  <button
-                    role="menuitem"
-                    onClick={() => {
-                      setMenu(false);
-                      setConfirmReset(true);
-                    }}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-graphite hover:bg-canvas"
-                  >
-                    <RotateCcw className="size-4" aria-hidden /> Restablecer datos demo
-                  </button>
-                )}
+              ))}
+              <div className="my-2 h-px bg-line" />
+              <button role="menuitem" onClick={() => navigate('/app')} className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-graphite hover:bg-canvas">
+                <Smartphone className="size-4" aria-hidden /> Abrir aplicación móvil
+              </button>
+              {role === 'admin' && (
                 <button
                   role="menuitem"
                   onClick={() => {
-                    logout();
-                    navigate('/web/login');
+                    setMenu(false);
+                    setConfirmReset(true);
                   }}
-                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-danger hover:bg-danger-50"
+                  className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm text-graphite hover:bg-canvas"
                 >
-                  <LogOut className="size-4" aria-hidden /> Cerrar sesión
+                  <RotateCcw className="size-4" aria-hidden /> Restablecer datos demo
                 </button>
-              </div>
-            )}
-          </div>
-        </header>
+              )}
+              <button
+                role="menuitem"
+                onClick={() => {
+                  logout();
+                  navigate('/web/login');
+                }}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold text-danger hover:bg-danger-50"
+              >
+                <LogOut className="size-4" aria-hidden /> Cerrar sesión
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
 
-        <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <Outlet />
-        </main>
+      <ConnectivityBanner className="sticky top-[calc(var(--demo-h)+3.5rem)] z-20" />
+
+      <div className="flex flex-1">
+        <aside className="hidden w-[112px] shrink-0 bg-flp-bar lg:block">
+          <div className="sticky top-[calc(var(--demo-h)+3.5rem)] h-[calc(100dvh-3.5rem-var(--demo-h))]">{sidebar}</div>
+        </aside>
+
+        {drawer && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div className="animate-fade absolute inset-0 bg-ink/60" onClick={() => setDrawer(false)} aria-hidden />
+            <div className="animate-pop relative h-full w-[112px]">
+              {sidebar}
+              <button onClick={() => setDrawer(false)} className="absolute -right-11 top-3 rounded-lg bg-flp-bar p-1.5 text-white/80" aria-label="Cerrar menú">
+                <X className="size-5" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* Banda naranja con curvas de nivel y título de la página */}
+          <div className="flp-band h-44 shrink-0 px-4 pt-7 sm:px-6 lg:px-10">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
+            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'FLP Escondida'}</h1>
+          </div>
+
+          <main className="relative -mt-16 mx-auto w-full max-w-[1400px] flex-1 px-3 pb-8 sm:px-5 lg:px-8">
+            <div className="rounded-2xl bg-canvas p-4 shadow-[var(--shadow-pop)] sm:p-6">
+              <Outlet />
+            </div>
+          </main>
+        </div>
       </div>
 
       <ConfirmDialog

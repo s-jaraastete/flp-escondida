@@ -4,12 +4,14 @@
  * por lo que ambas experiencias comparten el mismo comportamiento.
  */
 import type {
+  SpotFlp,
   ActionPlan,
   ActionStatus,
   ActivityType,
   Booking,
   BookingStatus,
   FlpData,
+  PostVisit,
   Project,
   RequirementKey,
   Result,
@@ -21,7 +23,7 @@ import type {
 } from '@/types';
 import { VERIFICATION_QUESTIONS, controlById } from '@/data/catalogs';
 import { activityTitle, computeCompliance } from '@/data/seed';
-import { nowISO, timesOverlap, todayISO, toMinutes } from '@/utils/date';
+import { addDaysISO, nowISO, timesOverlap, todayISO, toMinutes } from '@/utils/date';
 import { uid } from '@/utils/misc';
 
 type R = Result<FlpData>;
@@ -55,6 +57,14 @@ export function slotHasStarted(slot: Slot, now = new Date()) {
 }
 
 /** Reserva activa del mismo usuario que se superpone con el horario indicado. */
+/** Días que tiene la persona para marcar una visita como realizada. Después cuenta como "sin asistencia". */
+export const CHECK_WINDOW_DAYS = 7;
+
+/** Reserva confirmada que no se marcó dentro del plazo: FLP planificado sin asistencia. */
+export function isNoShow(b: Booking, slot: Slot, hasVerification: boolean, today = todayISO()) {
+  return b.status === 'confirmada' && !hasVerification && slot.date < addDaysISO(today, -CHECK_WINDOW_DAYS);
+}
+
 export function findUserOverlap(d: FlpData, userId: string, slot: Slot, excludeBookingId?: string) {
   return d.bookings.find((b) => {
     if (b.userId !== userId || b.id === excludeBookingId || !OPEN_BOOKING.includes(b.status)) return false;
@@ -296,6 +306,7 @@ export interface VerificationInput {
   contractorObserved: boolean;
   answers: VerificationAnswer[];
   actions: ActionDraft[];
+  postVisit?: PostVisit;
 }
 
 export function validateVerification(d: FlpData, input: VerificationInput): string[] {
@@ -324,6 +335,34 @@ export function validateVerification(d: FlpData, input: VerificationInput): stri
   return errors;
 }
 
+export const FLP_ID_PATTERN = /^(CCO|PTC|LA|TTT)-\d{4}-\d{2}-\d{5,8}$/i;
+
+function normalizePostVisit(p: PostVisit): PostVisit {
+  return {
+    flpActivityId: p.flpActivityId.trim().toUpperCase(),
+    eventProposal: p.eventProposal,
+    eventId: p.eventProposal === 'ninguno' ? '' : p.eventId.trim(),
+    immediateActions: p.immediateActions.trim(),
+    followUp: p.followUp.trim(),
+  };
+}
+
+/** Registra (o corrige) el ID de la actividad en FLP después de haberla cargado allá. */
+export function setFlpActivityId(d: FlpData, verificationId: string, flpActivityId: string, userId: string): Result<FlpData> {
+  const v = d.verifications.find((x) => x.id === verificationId);
+  if (!v) return { ok: false, error: 'Verificación no encontrada.' };
+  if (v.userId !== userId) return { ok: false, error: 'Solo quien registró la verificación puede vincularla con FLP.' };
+  const id = flpActivityId.trim().toUpperCase();
+  if (id && !FLP_ID_PATTERN.test(id)) return { ok: false, error: 'Formato de ID FLP no válido. Ejemplo: CCO-2026-11-4068392.' };
+  const base: PostVisit = v.postVisit ?? { flpActivityId: '', eventProposal: 'ninguno', eventId: '', immediateActions: '', followUp: '' };
+  const next: Verification = { ...v, postVisit: { ...base, flpActivityId: id } };
+  return {
+    ok: true,
+    value: { ...d, verifications: d.verifications.map((x) => (x.id === v.id ? next : x)) },
+    message: id ? `Actividad vinculada con FLP (${id}).` : 'Vínculo con FLP eliminado.',
+  };
+}
+
 export function submitVerification(d: FlpData, input: VerificationInput): Result<{ data: FlpData; verification: Verification }> {
   const errors = validateVerification(d, input);
   if (errors.length) return { ok: false, error: errors[0] };
@@ -344,6 +383,7 @@ export function submitVerification(d: FlpData, input: VerificationInput): Result
     answers: input.answers,
     compliance: computeCompliance(input.answers),
     completedAt: at,
+    ...(input.postVisit ? { postVisit: normalizePostVisit(input.postVisit) } : {}),
   };
   const newActions: ActionPlan[] = input.answers
     .filter((a) => a.actionRequired)
@@ -380,6 +420,63 @@ export function submitVerification(d: FlpData, input: VerificationInput): Result
     },
     message: `Verificación registrada (${verification.compliance}% de cumplimiento)${newActions.length ? ` y ${newActions.length} acción(es) creada(s)` : ''}.`,
   };
+}
+
+/**
+ * Marca la visita como realizada con un solo check (sin formulario).
+ * Queda como verificación sin hallazgos y pendiente de registro en FLP.
+ */
+export function checkVisit(d: FlpData, bookingId: string, userId: string): Result<FlpData> {
+  const b = findBooking(d, bookingId);
+  if (!b) return { ok: false, error: 'Reserva no encontrada.' };
+  if (b.userId !== userId) return { ok: false, error: 'Solo la persona inscrita puede marcar esta visita.' };
+  if (b.status !== 'confirmada') return { ok: false, error: 'Solo se pueden marcar visitas confirmadas.' };
+  const slot = findSlot(d, b.slotId)!;
+  if (!slotHasStarted(slot)) return { ok: false, error: 'Podrás marcarla desde la hora de inicio de la visita.' };
+  if (d.verifications.some((v) => v.bookingId === b.id)) return { ok: false, error: 'Esta visita ya está marcada como realizada.' };
+  if (isNoShow(b, slot, false)) return { ok: false, error: `Pasaron más de ${CHECK_WINDOW_DAYS} días: la visita quedó como planificada sin asistencia.` };
+  const at = nowISO();
+  const verification: Verification = {
+    id: uid('v'),
+    bookingId: b.id,
+    slotId: slot.id,
+    projectId: slot.projectId,
+    userId,
+    activityName: slot.title,
+    verificationType: slot.activityType,
+    riskId: slot.riskId,
+    controlId: slot.controlId,
+    contractorObserved: true,
+    answers: [],
+    compliance: 100,
+    completedAt: at,
+    postVisit: { flpActivityId: '', eventProposal: 'ninguno', eventId: '', immediateActions: '', followUp: '' },
+  };
+  const booking = pushHistory({ ...b, status: 'completada' }, 'completada', userId, 'Visita realizada.');
+  return {
+    ok: true,
+    value: { ...d, bookings: replace(d.bookings, booking), verifications: [...d.verifications, verification] },
+    message: 'Visita marcada como realizada.',
+  };
+}
+
+// ---------------------------------------------------------------- FLP spot (sin planificar)
+
+export interface SpotInput {
+  userId: string;
+  projectId: string;
+  activityType: SpotFlp['activityType'];
+  date: string;
+  note: string;
+}
+
+/** Registra un FLP spot: la persona hizo FLP sin haber reservado un horario. */
+export function registerSpot(d: FlpData, input: SpotInput): Result<FlpData> {
+  if (!input.projectId || !findProject(d, input.projectId)) return { ok: false, error: 'Selecciona el proyecto donde hiciste el FLP.' };
+  if (!input.date) return { ok: false, error: 'Indica la fecha.' };
+  if (input.date > todayISO()) return { ok: false, error: 'El FLP spot se registra después de hacerlo (no puede ser una fecha futura).' };
+  const spot: SpotFlp = { id: uid('sp'), userId: input.userId, projectId: input.projectId, activityType: input.activityType, date: input.date, note: input.note.trim(), createdAt: nowISO() };
+  return { ok: true, value: { ...d, spots: [...(d.spots ?? []), spot] }, message: 'FLP spot registrado.' };
 }
 
 export interface ManualActionInput {

@@ -8,6 +8,7 @@ import type {
   Project,
   RequirementKey,
   Slot,
+  SpotFlp,
   User,
   Verification,
   VerificationAnswer,
@@ -16,7 +17,7 @@ import { ACTION_OWNERS, CONTROLS, VERIFICATION_QUESTIONS, controlsForRisk, riskB
 import { addDaysISO, timesOverlap, toISODate, today } from '@/utils/date';
 import { seededRandom } from '@/utils/misc';
 
-export const DATA_VERSION = 6;
+export const DATA_VERSION = 8;
 
 /** Identificadores fijos de las cuentas demo (una por perfil). */
 export const DEMO_USER_IDS = {
@@ -249,8 +250,8 @@ export function buildSeed(): FlpData {
         if (placed >= n) break;
         if (!userIsFree(u.id, slot)) continue;
         const r = rnd();
-        // 'confirmada' sin verificación (pendiente de registro) solo en las últimas 2 semanas
-        const status: BookingStatus = r < 0.8 ? 'completada' : r < 0.9 ? 'cancelada' : r < 0.95 ? 'rechazada' : d > -14 ? 'confirmada' : 'completada';
+        // 'confirmada' sin realizar = planificado sin asistencia (~7%), más los pendientes de las últimas 2 semanas.
+        const status: BookingStatus = r < 0.73 ? 'completada' : r < 0.8 ? 'confirmada' : r < 0.9 ? 'cancelada' : r < 0.95 ? 'rechazada' : d > -14 ? 'confirmada' : 'completada';
         const b = makeBooking(slot, u.id, status);
         if (status === 'completada') makeVerification(b);
         placed++;
@@ -312,6 +313,24 @@ export function buildSeed(): FlpData {
 
   slots.sort((a, b) => (a.date + a.start).localeCompare(b.date + b.start));
 
+  // FLP spot: actividades realizadas sin reserva (últimos ~5 meses, en días hábiles).
+  const spots: SpotFlp[] = [];
+  for (let back = 150; back >= 1; back--) {
+    const day = addDays(t0, -back);
+    if (isWeekend(day) || rnd() > 0.22) continue;
+    const date = toISODate(day);
+    spots.push({
+      id: `sp-${spots.length + 1}`,
+      userId: pick(participants).id,
+      projectId: pick(activeProjects).id,
+      activityType: rnd() < 0.7 ? 'OVCC' : 'CTP',
+      date,
+      note: '',
+      createdAt: `${date}T15:00:00.000Z`,
+    });
+  }
+  spots.push({ id: `sp-${spots.length + 1}`, userId: 'u-user', projectId: PROJECTS[2].id, activityType: 'OVCC', date: addDaysISO(iso0, -6), note: 'Pasé por el área y aproveché de observar los controles.', createdAt: `${addDaysISO(iso0, -6)}T15:00:00.000Z` });
+
   return {
     version: DATA_VERSION,
     seededAt: nowStamp,
@@ -321,5 +340,6 @@ export function buildSeed(): FlpData {
     bookings,
     verifications,
     actions,
+    spots,
   };
 }

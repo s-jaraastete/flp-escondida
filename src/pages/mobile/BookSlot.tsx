@@ -75,7 +75,7 @@ export default function MobileBookSlot() {
           {STEPS.map((s, i) => (
             <li key={s} aria-current={i === step ? 'step' : undefined}>
               <div className={cx('h-1 rounded-full', i <= step ? 'bg-brand' : 'bg-white/20')} />
-              <p className={cx('mt-1 text-[11px] font-bold', i === step ? 'text-white' : 'text-white/50')}>
+              <p className={cx('mt-1 text-xs font-bold', i === step ? 'text-white' : 'text-white/50')}>
                 {i + 1}. {s}
               </p>
             </li>

@@ -1,20 +1,14 @@
 import { cx } from '@/utils/misc';
 
+const LOGO_HEIGHT = { sm: 'h-4', md: 'h-5', lg: 'h-8' } as const;
+
 /**
- * Identificador tipográfico (no usa logos oficiales ni imágenes externas).
- * Reemplazable por recursos gráficos corporativos autorizados cuando existan.
+ * Logo "35 años Escondida | BHP" (archivo entregado por el cliente en public/).
+ * tone="color" = naranja corporativo (fondos blancos o negros); tone="white" = sobre la banda naranja.
  */
-export function Wordmark({ tone = 'light', size = 'md', className }: { tone?: 'light' | 'dark'; size?: 'sm' | 'md' | 'lg'; className?: string }) {
-  return (
-    <span
-      className={cx('wordmark inline-flex items-center gap-2 text-brand', size === 'sm' && 'text-sm', size === 'md' && 'text-base', size === 'lg' && 'text-2xl', className)}
-      aria-label="Escondida BHP"
-    >
-      <span>ESCONDIDA</span>
-      <span className={cx('h-[1em] w-px', tone === 'light' ? 'bg-white/40' : 'bg-ink/30')} aria-hidden />
-      <span>BHP</span>
-    </span>
-  );
+export function Wordmark({ tone = 'color', size = 'md', className }: { tone?: 'color' | 'white'; size?: 'sm' | 'md' | 'lg'; className?: string }) {
+  const file = tone === 'white' ? 'escondida-bhp-white.png' : 'escondida-bhp.png';
+  return <img src={`${import.meta.env.BASE_URL}${file}`} alt="Escondida | BHP" className={cx('inline-block w-auto select-none', LOGO_HEIGHT[size], className)} draggable={false} />;
 }
 
 export function FlpMark({ className }: { className?: string }) {
@@ -29,7 +23,7 @@ export function FlpMark({ className }: { className?: string }) {
 
 export function DemoBadge({ className }: { className?: string }) {
   return (
-    <span className={cx('inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-warning ring-1 ring-warning/30', className)}>
+    <span className={cx('inline-flex items-center gap-1 rounded-full bg-warning-50 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-warning ring-1 ring-warning/30', className)}>
       Modo demo
     </span>
   );

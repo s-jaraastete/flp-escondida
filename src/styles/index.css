@@ -3,6 +3,10 @@
 
 @layer base {
   html { -webkit-tap-highlight-color: transparent; }
+  /* Alto de la franja de demostración (DemoBar); los encabezados fijos se ubican debajo. */
+  :root { --demo-h: 2.5rem; }
+  /* Letra grande (botón A+): todo el texto y espaciado está en rem, así que escala completo. */
+  html[data-text="lg"] { font-size: 112.5%; }
   body {
     @apply bg-canvas text-ink antialiased;
     font-family: var(--font-sans);
@@ -23,6 +27,13 @@
       focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none disabled:bg-canvas disabled:text-muted;
   }
   .label { @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-graphite; }
+  /* Banda naranja con curvas de nivel, como el header de FLP */
+  .flp-band {
+    background-color: var(--color-flp-band);
+    background-image: url('/topo.svg'), linear-gradient(180deg, #d9702f 0%, #c85d20 100%);
+    background-size: cover, auto;
+    background-position: center;
+  }
   .wordmark { font-family: var(--font-display); letter-spacing: 0.04em; font-weight: 900; }
 }
 

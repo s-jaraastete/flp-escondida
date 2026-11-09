@@ -9,6 +9,7 @@ import { BookingBadge, TypeBadge } from '@/components/ui/status';
 import { userBookings } from '@/services/selectors';
 import { relativeDay, todayISO } from '@/utils/date';
 import { cx } from '@/utils/misc';
+import { CheckVisitButton } from '@/features/verification/CheckVisitButton';
 
 type Tab = 'proximas' | 'verificar' | 'historial';
 
@@ -21,7 +22,7 @@ export default function MobileVisits() {
   const groups = {
     proximas: all.filter((b) => ['pendiente', 'confirmada'].includes(b.status) && !b.awaitingVerification && b.slot.date >= t),
     verificar: all.filter((b) => b.awaitingVerification).reverse(),
-    historial: all.filter((b) => ['completada', 'cancelada', 'rechazada'].includes(b.status) || (b.status === 'pendiente' && b.slot.date < t)).reverse(),
+    historial: all.filter((b) => ['completada', 'cancelada', 'rechazada'].includes(b.status) || (b.status === 'pendiente' && b.slot.date < t) || b.noShow).reverse(),
   };
   const [tab, setTab] = useState<Tab>(groups.verificar.length ? 'verificar' : 'proximas');
   const list = groups[tab];
@@ -33,7 +34,7 @@ export default function MobileVisits() {
           {(
             [
               ['proximas', 'Próximas'],
-              ['verificar', 'Verificar'],
+              ['verificar', 'Por marcar'],
               ['historial', 'Historial'],
             ] as const
           ).map(([k, l]) => (
@@ -47,19 +48,20 @@ export default function MobileVisits() {
         {list.length === 0 && (
           <EmptyState
             icon={CalendarDays}
-            title={tab === 'verificar' ? 'Sin verificaciones pendientes' : tab === 'proximas' ? 'No tienes visitas próximas' : 'Sin historial'}
+            title={tab === 'verificar' ? 'No tienes visitas por marcar' : tab === 'proximas' ? 'No tienes visitas próximas' : 'Sin historial'}
             action={tab === 'proximas' ? <Button onClick={() => navigate('/app/explorar')}>Explorar proyectos</Button> : undefined}
           />
         )}
         {list.map((b) => (
-          <Link key={b.id} to={b.awaitingVerification ? `/app/verificar/${b.id}` : `/app/visita/${b.id}`} className="card flex items-center gap-3 p-3.5 active:scale-[0.99]">
+          <div key={b.id} className="card p-3.5">
+          <Link to={`/app/visita/${b.id}`} className="flex items-center gap-3 active:scale-[0.99]">
             <div className="w-14 shrink-0 text-center">
-              <p className="text-[11px] font-bold first-letter:uppercase text-muted">{relativeDay(b.slot.date)}</p>
+              <p className="text-xs font-bold first-letter:uppercase text-muted">{relativeDay(b.slot.date)}</p>
               <p className="text-lg font-extrabold text-ink">{b.slot.start}</p>
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <BookingBadge status={b.status} awaiting={b.awaitingVerification} />
+                <BookingBadge status={b.status} awaiting={b.awaitingVerification} noShow={b.noShow} />
                 <TypeBadge type={b.slot.activityType} />
               </div>
               <p className="mt-1 truncate text-sm font-bold text-ink">{b.slot.project.name}</p>
@@ -67,6 +69,8 @@ export default function MobileVisits() {
             </div>
             <ChevronRight className="size-5 text-muted" aria-hidden />
           </Link>
+          {b.awaitingVerification && <CheckVisitButton block className="mt-3" bookingId={b.id} userId={user.id} />}
+          </div>
         ))}
       </div>
     </div>

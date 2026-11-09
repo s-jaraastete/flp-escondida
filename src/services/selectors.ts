@@ -3,7 +3,7 @@ import type { ActionPlan, Area, Booking, FlpData, Slot } from '@/types';
 import { companyById, controlById, riskById } from '@/data/catalogs';
 import { locale, today, todayISO, toISODate } from '@/utils/date';
 import { pct } from '@/utils/misc';
-import { OCCUPYING, findProject, findSlot, findUser, occupancy, slotHasStarted } from './flpService';
+import { OCCUPYING, findProject, findSlot, findUser, isNoShow, occupancy, slotHasStarted } from './flpService';
 
 export interface SlotView extends Slot {
   project: NonNullable<ReturnType<typeof findProject>>;
@@ -41,6 +41,8 @@ export interface BookingView extends Booking {
   userName: string;
   hasVerification: boolean;
   awaitingVerification: boolean;
+  /** Confirmada y no marcada dentro del plazo. */
+  noShow: boolean;
 }
 
 export function bookingView(d: FlpData, b: Booking): BookingView {
@@ -51,7 +53,8 @@ export function bookingView(d: FlpData, b: Booking): BookingView {
     slot,
     userName: findUser(d, b.userId)?.name ?? '—',
     hasVerification,
-    awaitingVerification: b.status === 'confirmada' && slotHasStarted(slot) && !hasVerification,
+    noShow: isNoShow(b, slot, hasVerification),
+    awaitingVerification: b.status === 'confirmada' && slotHasStarted(slot) && !hasVerification && !isNoShow(b, slot, hasVerification),
   };
 }
 
@@ -129,6 +132,34 @@ export function monthlySeries(d: FlpData, f: Filters = {}) {
   });
 }
 
+/** Planificado (con reserva) vs FLP spot y planificado sin asistencia, por mes. */
+export function spotSeries(d: FlpData, f: Filters = {}) {
+  const base = startOfMonth(today());
+  const t = todayISO();
+  const months = Array.from({ length: 6 }, (_, i) => addMonths(base, i - 5));
+  return months.map((m) => {
+    const key = format(m, 'yyyy-MM');
+    const verifs = d.verifications.filter((v) => v.completedAt.startsWith(key) && areaOk(d, v.projectId, f.area) && (!f.userId || v.userId === f.userId));
+    const spots = (d.spots ?? []).filter((s) => s.date.startsWith(key) && areaOk(d, s.projectId, f.area) && (!f.userId || s.userId === f.userId));
+    const noShow = d.bookings.filter((b) => {
+      if (b.status !== 'confirmada' || (f.userId && b.userId !== f.userId)) return false;
+      const s = findSlot(d, b.slotId);
+      return !!s && s.date.startsWith(key) && areaOk(d, s.projectId, f.area) && isNoShow(b, s, d.verifications.some((v) => v.bookingId === b.id), t);
+    });
+    return { key, mes: format(m, 'MMM yy', { locale }), planificado: verifs.length, spot: spots.length, sinAsistencia: noShow.length };
+  });
+}
+
+/** Totales de los últimos 6 meses para las tarjetas de FLP spot / sin asistencia. */
+export function spotTotals(d: FlpData, f: Filters = {}) {
+  const s = spotSeries(d, f);
+  const planificado = s.reduce((n, x) => n + x.planificado, 0);
+  const spot = s.reduce((n, x) => n + x.spot, 0);
+  const sinAsistencia = s.reduce((n, x) => n + x.sinAsistencia, 0);
+  const total = planificado + spot;
+  return { planificado, spot, sinAsistencia, spotShare: total ? Math.round((spot / total) * 100) : 0, noShowRate: planificado + sinAsistencia ? Math.round((sinAsistencia / (planificado + sinAsistencia)) * 100) : 0 };
+}
+
 export function areaBreakdown(d: FlpData) {
   return (['Mina', 'Coloso'] as Area[]).map((area) => {
     const k = kpis(d, { area });
@@ -193,18 +224,12 @@ export function userBookings(d: FlpData, userId: string) {
 export function alerts(d: FlpData, f: Filters = {}) {
   const t = todayISO();
   const list: Array<{ id: string; tone: 'danger' | 'warning' | 'info'; title: string; detail: string }> = [];
-  d.actions
-    .filter((a) => isOverdue(a) && areaOk(d, a.projectId, f.area))
-    .slice(0, 6)
-    .forEach((a) =>
-      list.push({ id: a.id, tone: 'danger', title: 'Acción vencida', detail: `${findProject(d, a.projectId)?.name} · vencía ${a.dueDate.split('-').reverse().join('-')}` }),
-    );
   d.bookings
     .filter((b) => b.status === 'confirmada')
     .map((b) => bookingView(d, b))
     .filter((b) => b.awaitingVerification && b.slot.date < t && areaOk(d, b.slot.projectId, f.area))
     .slice(0, 4)
-    .forEach((b) => list.push({ id: b.id, tone: 'warning', title: 'Verificación pendiente', detail: `${b.userName} · ${b.slot.project.name}` }));
+    .forEach((b) => list.push({ id: b.id, tone: 'warning', title: 'Visita sin marcar', detail: `${b.userName} · ${b.slot.project.name}` }));
   const pend = d.bookings.filter((b) => b.status === 'pendiente' && areaOk(d, findSlot(d, b.slotId)!.projectId, f.area)).length;
   if (pend) list.push({ id: 'pend', tone: 'info', title: `${pend} solicitudes por confirmar`, detail: 'Revisar en Solicitudes de reserva' });
   return list;

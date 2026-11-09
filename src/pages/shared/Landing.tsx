@@ -115,7 +115,7 @@ function EntryCard({
       className={
         'group relative flex flex-col overflow-hidden rounded-3xl border p-7 transition duration-200 hover:-translate-y-1 ' +
         (accent
-          ? 'border-brand/50 bg-gradient-to-br from-brand to-brand-700 hover:shadow-[0_20px_60px_rgb(241_90_36/0.35)]'
+          ? 'border-brand/50 bg-gradient-to-br from-brand to-brand-700 hover:shadow-[0_20px_60px_rgb(231_85_15/0.35)]'
           : 'border-white/10 bg-white/[0.04] backdrop-blur hover:border-white/25 hover:bg-white/[0.07]')
       }
     >

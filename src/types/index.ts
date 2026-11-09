@@ -125,6 +125,17 @@ export interface VerificationAnswer {
   actionRequired: boolean;
 }
 
+export type EventProposal = 'ninguno' | 'Hz' | 'LM';
+
+/** Cierre post-visita (columnas "Post visita de terreno" de la planilla del cliente) y puente con FLP. */
+export interface PostVisit {
+  flpActivityId: string; // ID de la actividad registrada en FLP (p. ej. CCO-2026-11-4068392)
+  eventProposal: EventProposal; // Propuesta de evento Hz / LM
+  eventId: string; // ID del evento Hz / LM
+  immediateActions: string; // Acciones inmediatas tomadas en terreno
+  followUp: string; // Oportunidades para seguimiento de la actividad y/o área
+}
+
 export interface Verification {
   id: string;
   bookingId: string;
@@ -139,6 +150,7 @@ export interface Verification {
   answers: VerificationAnswer[];
   compliance: number; // 0-100 (% de SÍ sobre respuestas aplicables)
   completedAt: string;
+  postVisit?: PostVisit;
 }
 
 export type ActionStatus = 'abierta' | 'en_progreso' | 'cerrada';
@@ -159,6 +171,17 @@ export interface ActionPlan {
   closedAt: string | null;
 }
 
+/** FLP spot: actividad FLP realizada sin reserva previa (no planificada). */
+export interface SpotFlp {
+  id: string;
+  userId: string;
+  projectId: string;
+  activityType: ActivityType;
+  date: string; // yyyy-MM-dd
+  note: string;
+  createdAt: string;
+}
+
 export interface FlpData {
   version: number;
   seededAt: string;
@@ -168,6 +191,7 @@ export interface FlpData {
   bookings: Booking[];
   verifications: Verification[];
   actions: ActionPlan[];
+  spots: SpotFlp[];
 }
 
 export interface Session {

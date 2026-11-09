@@ -41,16 +41,40 @@ export const REQUIREMENTS: Record<RequirementKey, { label: string; description: 
 
 export const REQUIREMENT_KEYS = Object.keys(REQUIREMENTS) as RequirementKey[];
 
-export const ACTIVITY_TYPES: Record<ActivityType, { label: string; description: string }> = {
+/**
+ * Tipos de actividad de la planilla del cliente y su equivalente en la plataforma FLP (flex.bhp.com).
+ * Equivalencias a validar con el estándar vigente: OVCC → CCO (Critical Control Observation), CTP → PTC (Planned Task Confirmation).
+ */
+export const ACTIVITY_TYPES: Record<ActivityType, { label: string; name: string; flp: 'CCO' | 'PTC'; flpName: string; description: string }> = {
   OVCC: {
     label: 'OVCC',
-    description: 'Observación y verificación de controles críticos asociados a un Riesgo Material.',
+    name: 'Observación y verificación de controles críticos',
+    flp: 'CCO',
+    flpName: 'Critical Control Observation',
+    description: 'Observación y verificación de controles críticos asociados a un Riesgo Material. Se registra en FLP como CCO.',
   },
   CTP: {
     label: 'CTP',
-    description: 'Actividad de liderazgo en terreno CTP con el equipo del proyecto y la empresa contratista.',
+    name: 'Confirmación de tarea planificada',
+    flp: 'PTC',
+    flpName: 'Planned Task Confirmation',
+    description: 'Confirmación en terreno de que la tarea se ejecuta según su procedimiento o estándar. Se registra en FLP como PTC.',
   },
 };
+
+/** Las 3 preguntas de engagement que FLP pide usar antes de revisar los controles específicos. */
+export const ENGAGEMENT_QUESTIONS = [
+  '¿Qué es lo que te puede matar en esta tarea?',
+  '¿Cuáles son los controles críticos que te mantienen seguro?',
+  '¿Cómo sabes que esos controles están implementados y son efectivos?',
+];
+
+/** Propuesta de evento post visita (columna "Propuesta de evento (Hz/LM)" de la planilla). */
+export const EVENT_PROPOSALS: Array<{ value: 'ninguno' | 'Hz' | 'LM'; label: string }> = [
+  { value: 'ninguno', label: 'Sin evento' },
+  { value: 'Hz', label: 'Hz' },
+  { value: 'LM', label: 'LM' },
+];
 
 export const AREAS = ['Mina', 'Coloso'] as const;
 

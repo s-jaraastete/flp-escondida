@@ -66,7 +66,7 @@ export default function MobileActivities() {
               period === 'pasadas' ? (
                 <Badge tone={verifiedBySlot.get(s.id) ? 'success' : 'warning'}>{verifiedBySlot.get(s.id) ?? 0} verif.</Badge>
               ) : (
-                <span className="text-[11px] font-bold text-graphite">{s.occupied}/{s.capacity} inscritos</span>
+                <span className="text-xs font-bold text-graphite">{s.occupied}/{s.capacity} inscritos</span>
               )
             }
           />

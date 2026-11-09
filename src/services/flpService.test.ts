@@ -3,17 +3,20 @@ import { buildSeed } from '@/data/seed';
 import { VERIFICATION_QUESTIONS } from '@/data/catalogs';
 import {
   bookSlot,
+  checkVisit,
+  registerSpot,
   cancelBooking,
   createSlot,
   decideBooking,
   occupancy,
   rescheduleBooking,
+  setFlpActivityId,
   submitVerification,
   validateSlot,
   slotHasStarted,
   type SlotInput,
 } from './flpService';
-import { kpis } from './selectors';
+import { awaitingForUser, kpis, spotTotals } from './selectors';
 import { addDaysISO, todayISO } from '@/utils/date';
 import type { Answer, FlpData, Slot } from '@/types';
 
@@ -179,5 +182,55 @@ describe('verificación', () => {
     expect(after.completed).toBe(before.completed + 1);
     expect(after.actionsOpen).toBe(before.actionsOpen + 1);
     expect(r.value.data.bookings.find((b) => b.id === booking.id)?.status).toBe('completada');
+  });
+
+  it('guarda el cierre post-visita y permite vincular el ID de FLP después', () => {
+    const d = buildSeed();
+    const booking = d.bookings.find(
+      (b) => b.userId === USER && b.status === 'confirmada' && slotHasStarted(d.slots.find((s) => s.id === b.slotId)!),
+    )!;
+    const answers = VERIFICATION_QUESTIONS.map((q) => ({ questionId: q.id, response: 'SI' as Answer, comment: '', evidence: [], actionRequired: false }));
+    const r = submitVerification(d, {
+      bookingId: booking.id,
+      userId: USER,
+      contractorObserved: true,
+      answers,
+      actions: [],
+      postVisit: { flpActivityId: '', eventProposal: 'ninguno', eventId: 'X', immediateActions: ' Se detuvo la tarea ', followUp: '' },
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const v = r.value.verification;
+    expect(v.postVisit?.immediateActions).toBe('Se detuvo la tarea');
+    expect(v.postVisit?.eventId).toBe(''); // sin evento: no guarda ID de evento
+    expect(setFlpActivityId(r.value.data, v.id, 'cco-123', USER).ok).toBe(false); // formato inválido
+    expect(setFlpActivityId(r.value.data, v.id, 'CCO-2026-11-4068392', PLANNER).ok).toBe(false); // otra persona
+    const linked = setFlpActivityId(r.value.data, v.id, 'cco-2026-11-4068392', USER);
+    expect(linked.ok).toBe(true);
+    if (linked.ok) expect(linked.value.verifications.find((x) => x.id === v.id)?.postVisit?.flpActivityId).toBe('CCO-2026-11-4068392');
+  });
+});
+
+describe('Check de visita y FLP spot', () => {
+  it('marca la visita como realizada con un solo check y no permite repetirlo', () => {
+    const d = buildSeed();
+    const b = awaitingForUser(d, USER)[0];
+    const r = checkVisit(d, b.id, USER);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.value.bookings.find((x) => x.id === b.id)?.status).toBe('completada');
+    expect(r.value.verifications.find((v) => v.bookingId === b.id)?.postVisit?.flpActivityId).toBe('');
+    expect(checkVisit(r.value, b.id, USER).ok).toBe(false);
+    expect(checkVisit(d, b.id, PLANNER).ok).toBe(false);
+  });
+
+  it('registra un FLP spot y rechaza fechas futuras o sin proyecto', () => {
+    const d = buildSeed();
+    const before = spotTotals(d, { userId: USER }).spot;
+    const ok = registerSpot(d, { userId: USER, projectId: d.projects[0].id, activityType: 'CTP', date: todayISO(), note: '' });
+    expect(ok.ok).toBe(true);
+    if (ok.ok) expect(spotTotals(ok.value, { userId: USER }).spot).toBe(before + 1);
+    expect(registerSpot(d, { userId: USER, projectId: '', activityType: 'OVCC', date: todayISO(), note: '' }).ok).toBe(false);
+    expect(registerSpot(d, { userId: USER, projectId: d.projects[0].id, activityType: 'OVCC', date: addDaysISO(todayISO(), 1), note: '' }).ok).toBe(false);
   });
 });

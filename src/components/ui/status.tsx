@@ -31,8 +31,9 @@ export const BOOKING_STATUS: Record<BookingStatus, { label: string; tone: Tone }
   rechazada: { label: 'Rechazada', tone: 'danger' },
 };
 
-export function BookingBadge({ status, awaiting }: { status: BookingStatus; awaiting?: boolean }) {
-  if (awaiting) return <Badge tone="brand" dot>Por verificar</Badge>;
+export function BookingBadge({ status, awaiting, noShow }: { status: BookingStatus; awaiting?: boolean; noShow?: boolean }) {
+  if (noShow) return <Badge tone="danger" dot>Sin asistencia</Badge>;
+  if (awaiting) return <Badge tone="brand" dot>Por marcar</Badge>;
   const s = BOOKING_STATUS[status];
   return <Badge tone={s.tone} dot>{s.label}</Badge>;
 }
@@ -44,8 +45,15 @@ export function ActionBadge({ action }: { action: ActionPlan }) {
   return <Badge tone="warning" dot>Abierta</Badge>;
 }
 
-export function TypeBadge({ type }: { type: ActivityType }) {
-  return <Badge tone={type === 'OVCC' ? 'brand' : 'dark'}>{type}</Badge>;
+const FLP_EQUIVALENT: Record<ActivityType, string> = { OVCC: 'CCO', CTP: 'PTC' };
+
+/** Tipo de actividad. withFlp muestra además su equivalente en FLP (OVCC · CCO / CTP · PTC). */
+export function TypeBadge({ type, withFlp }: { type: ActivityType; withFlp?: boolean }) {
+  return (
+    <span title={`Se registra en FLP como ${FLP_EQUIVALENT[type]}`}>
+      <Badge tone={type === 'OVCC' ? 'brand' : 'dark'}>{withFlp ? `${type} · ${FLP_EQUIVALENT[type]}` : type}</Badge>
+    </span>
+  );
 }
 
 export function AreaBadge({ area }: { area: Area }) {

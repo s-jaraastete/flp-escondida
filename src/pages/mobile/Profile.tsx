@@ -12,6 +12,9 @@ import { ROLE_LABEL } from '@/services/flpService';
 import { kpis, monthlySeries } from '@/services/selectors';
 import { ROLE_OPTIONS } from '@/features/auth/useDemoLogin';
 import { cx } from '@/utils/misc';
+import { OnlineToggle } from '@/features/offline/ConnectivityUI';
+import { TextSizeToggle } from '@/features/a11y/TextSize';
+import { useConnectivity } from '@/contexts/ConnectivityContext';
 
 export default function MobileProfile() {
   const { user, role, switchRole, logout } = useAuth('mobile');
@@ -24,17 +27,17 @@ export default function MobileProfile() {
 
   return (
     <div>
-      <header className="bg-ink px-4 pb-8 pt-6 text-center text-white">
+      <header className="flp-band px-4 pb-8 pt-6 text-center text-white">
         <div className="flex justify-center">
           <Avatar name={user.name} size="lg" />
         </div>
         <p className="mt-3 text-xl font-extrabold">{user.name}</p>
-        <p className="text-sm text-white/60">{user.position}</p>
+        <p className="text-sm text-white/85">{user.position}</p>
         <div className="mt-2 flex justify-center gap-2">
           <Badge>{ROLE_LABEL[role]}</Badge>
           <DemoBadgeInline />
         </div>
-        <p className="mt-2 text-xs text-white/50">{user.email}</p>
+        <p className="mt-2 text-xs text-white/80">{user.email}</p>
       </header>
 
       {role === 'user' ? (
@@ -65,6 +68,8 @@ export default function MobileProfile() {
           <StatPill label="Ocupación" value={`${k.occupancyRate}%`} tone="brand" />
         </div>
       )}
+
+      <ConnectionSection />
 
       <MSection title="Cambiar de perfil">
         <div className="card divide-y divide-line overflow-hidden">
@@ -116,7 +121,7 @@ export default function MobileProfile() {
             Cerrar sesión
           </Button>
         </div>
-        <p className="mt-4 text-center text-[11px] text-muted">FLP Escondida · prototipo v0.1 · datos ficticios guardados en este dispositivo</p>
+        <p className="mt-4 text-center text-xs text-muted">FLP Escondida · prototipo v0.1 · datos ficticios guardados en este dispositivo</p>
       </MSection>
 
       <ConfirmDialog
@@ -141,4 +146,40 @@ function Badge({ children }: { children: React.ReactNode }) {
 
 function DemoBadgeInline() {
   return <span className="rounded-full bg-warning-50 px-2.5 py-0.5 text-xs font-bold text-warning">Modo demo</span>;
+}
+
+/** Modo de conexión y registros que esperan sincronización. */
+function ConnectionSection() {
+  const { online, outbox, syncing } = useConnectivity();
+  return (
+    <MSection title="Lectura y conexión">
+      <div className="card mb-3 flex items-center justify-between gap-3 p-4">
+        <div>
+          <p className="text-sm font-semibold text-ink">Tamaño de letra</p>
+          <p className="text-xs text-muted">A+ agranda toda la app.</p>
+        </div>
+        <TextSizeToggle className="text-base" />
+      </div>
+      <div className="card p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-ink">{online ? (syncing ? 'Sincronizando…' : 'En línea') : 'Sin conexión'}</p>
+            <p className="text-xs text-muted">Usa Offline para trabajar en zonas sin señal.</p>
+          </div>
+          <OnlineToggle />
+        </div>
+        {outbox.length > 0 && (
+          <ul className="mt-3 grid gap-1.5 border-t border-line pt-3">
+            {outbox.map((o) => (
+              <li key={o.id} className="flex items-start gap-2 text-xs text-graphite">
+                <span className="mt-1 size-2 shrink-0 rounded-full bg-warning" aria-hidden />
+                <span className="flex-1">{o.label}</span>
+                <span className="shrink-0 tabular-nums text-muted">{o.at.slice(11, 16)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </MSection>
+  );
 }

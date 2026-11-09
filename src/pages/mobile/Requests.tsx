@@ -58,7 +58,7 @@ export default function MobileRequests() {
                 </span>
               </span>
             </div>
-            <p className="mt-1.5 text-[11px] text-muted">
+            <p className="mt-1.5 text-xs text-muted">
               Requisitos listos {b.checklist.length}/{b.slot.requirements.length}
               {b.note && <> · “{b.note}”</>}
             </p>

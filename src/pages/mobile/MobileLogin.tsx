@@ -86,7 +86,7 @@ export default function MobileLogin() {
           </p>
           <div className="mt-auto flex items-center justify-center gap-2 pt-6 text-xs text-muted">
             <Smartphone className="size-3.5" aria-hidden />
-            <Wordmark tone="dark" size="sm" />
+            <Wordmark size="sm" />
           </div>
         </form>
       </div>

@@ -64,7 +64,7 @@ export default function MobileAgenda() {
         ) : (
           <div className="grid gap-2.5">
             {list.map((s) => (
-              <SlotCard key={s.id} slot={s} to={`/app/disponibilidad/${s.id}`} right={<span className="text-[11px] font-bold text-graphite">{s.occupied}/{s.capacity}</span>} />
+              <SlotCard key={s.id} slot={s} to={`/app/disponibilidad/${s.id}`} right={<span className="text-xs font-bold text-graphite">{s.occupied}/{s.capacity}</span>} />
             ))}
           </div>
         )}

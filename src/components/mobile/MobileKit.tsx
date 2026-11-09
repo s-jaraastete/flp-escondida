@@ -11,7 +11,7 @@ export function MSection({ title, action, children, className }: { title: string
   return (
     <section className={cx('px-4 pt-5', className)}>
       <div className="mb-2.5 flex items-center justify-between">
-        <h2 className="text-[15px] font-extrabold text-ink">{title}</h2>
+        <h2 className="text-sm font-extrabold text-ink">{title}</h2>
         {action}
       </div>
       {children}
@@ -32,9 +32,9 @@ export function SlotCard({ slot, to, right, showProject = true }: { slot: SlotVi
   return (
     <Link to={to} className="card flex gap-3 p-3.5 active:scale-[0.99]">
       <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-canvas py-2">
-        <span className="text-[10px] font-bold uppercase text-muted">{format(new Date(slot.date + 'T12:00'), 'EEE', { locale })}</span>
+        <span className="text-xs font-bold uppercase text-muted">{format(new Date(slot.date + 'T12:00'), 'EEE', { locale })}</span>
         <span className="text-xl font-extrabold leading-none text-ink">{slot.date.slice(8)}</span>
-        <span className="text-[10px] font-semibold text-muted">{format(new Date(slot.date + 'T12:00'), 'MMM', { locale })}</span>
+        <span className="text-xs font-semibold text-muted">{format(new Date(slot.date + 'T12:00'), 'MMM', { locale })}</span>
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
@@ -43,7 +43,7 @@ export function SlotCard({ slot, to, right, showProject = true }: { slot: SlotVi
         </div>
         {showProject && <p className="mt-1 truncate text-sm font-bold text-ink">{slot.project.name}</p>}
         <p className="truncate text-xs text-graphite">{slot.controlName}</p>
-        <div className="mt-1 flex flex-wrap gap-x-3 text-[11px] text-muted">
+        <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-muted">
           <span className="flex items-center gap-1">
             <Clock className="size-3" aria-hidden />
             {slot.start}–{slot.end}
@@ -80,11 +80,11 @@ export function DayStrip({ value, onChange, days = 21, marks }: { value: string;
             onClick={() => onChange(iso)}
             className={cx(
               'flex w-14 shrink-0 flex-col items-center rounded-2xl py-2 transition',
-              active ? 'bg-brand text-white shadow-[0_6px_16px_rgb(241_90_36/0.35)]' : 'bg-white/10 text-white',
+              active ? 'bg-brand text-white shadow-[0_6px_16px_rgb(231_85_15/0.35)]' : 'bg-white/10 text-white',
             )}
             aria-label={`${format(d, "EEEE d 'de' MMMM", { locale })}, ${n} horarios`}
           >
-            <span className={cx('text-[10px] font-bold uppercase', active ? 'text-white/85' : 'text-white/55')}>{isToday(d) ? 'Hoy' : format(d, 'EEE', { locale })}</span>
+            <span className={cx('text-xs font-bold uppercase', active ? 'text-white/85' : 'text-white/55')}>{isToday(d) ? 'Hoy' : format(d, 'EEE', { locale })}</span>
             <span className="text-lg font-extrabold leading-tight">{format(d, 'd')}</span>
             <span className={cx('mt-0.5 size-1.5 rounded-full', n ? (active ? 'bg-white' : 'bg-brand') : 'bg-transparent')} aria-hidden />
           </button>
@@ -121,7 +121,7 @@ export function StatPill({ label, value, tone = 'ink' }: { label: string; value:
       >
         {value}
       </p>
-      <p className="text-[11px] font-medium leading-tight text-muted">{label}</p>
+      <p className="text-xs font-medium leading-tight text-muted">{label}</p>
     </div>
   );
 }

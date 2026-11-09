@@ -33,7 +33,7 @@ export default function MobileProject() {
     <div>
       <MobileHeader title={project.name} subtitle={`${project.code} · ${project.area}`} back>
         <p className="mt-1 text-xs text-white/60">{companyById(project.companyId)?.name}</p>
-        <p className="mb-2 mt-4 text-[11px] font-bold uppercase tracking-widest text-white/50">Disponibilidad · próximas 3 semanas</p>
+        <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-widest text-white/50">Disponibilidad · próximas 3 semanas</p>
         <DayStrip value={day} onChange={setDay} marks={marks} />
       </MobileHeader>
 
@@ -64,7 +64,7 @@ export default function MobileProject() {
             ['Persona a visitar', project.visitContact],
           ].map(([k, v]) => (
             <div key={k} className="rounded-2xl bg-surface p-3 ring-1 ring-line">
-              <dt className="text-[11px] text-muted">{k}</dt>
+              <dt className="text-xs text-muted">{k}</dt>
               <dd className="text-sm font-bold text-ink">{v}</dd>
             </div>
           ))}
