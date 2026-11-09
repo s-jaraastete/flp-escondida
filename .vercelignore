@@ -1,0 +1,13 @@
+# Nunca subir material de referencia corporativo (contiene datos personales)
+referencias/
+*.xlsx
+*.xls
+*.docx
+*.pdf
+
+# Artefactos locales
+node_modules/
+dist/
+coverage/
+.env
+.env.*
