@@ -1,0 +1,48 @@
+/*
+ * Tokens de diseño FLP Escondida.
+ * Cambia aquí la paleta y se propaga a toda la interfaz (web y móvil).
+ * Tailwind v4 genera utilidades a partir de estas variables: bg-brand, text-ink, etc.
+ */
+@theme {
+  /* Marca */
+  --color-brand: #f15a24;          /* Naranja corporativo */
+  --color-brand-600: #d9481a;
+  --color-brand-700: #b83a12;
+  --color-brand-50: #fff3ee;
+  --color-brand-100: #ffe1d4;
+
+  /* Neutros */
+  --color-ink: #111111;            /* Negro */
+  --color-ink-800: #1c1d20;
+  --color-ink-700: #26282c;
+  --color-ink-600: #33363b;
+  --color-surface: #ffffff;        /* Blanco */
+  --color-canvas: #f4f5f7;         /* Gris claro */
+  --color-line: #e3e5e9;
+  --color-muted: #6b7280;
+  --color-graphite: #374151;       /* Gris oscuro */
+
+  /* Estados */
+  --color-success: #15803d;
+  --color-success-50: #ecfdf3;
+  --color-danger: #c62828;
+  --color-danger-50: #fef2f2;
+  --color-warning: #b45309;
+  --color-warning-50: #fffbeb;
+  --color-petrol: #0f5e6b;         /* Azul petróleo (acento secundario) */
+  --color-petrol-50: #e8f4f6;
+
+  /* Series de gráficos (validadas para daltonismo y contraste sobre blanco) */
+  --color-chart-1: #f15a24;        /* serie 1: naranja corporativo */
+  --color-chart-2: #2a78d6;        /* serie 2: azul */
+  --color-chart-grid: #e8eaee;
+
+  /* Tipografía */
+  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Inter", "Segoe UI", system-ui, sans-serif;
+
+  /* Radios y sombras */
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(17 17 17 / 0.04), 0 4px 16px rgb(17 17 17 / 0.06);
+  --shadow-pop: 0 12px 40px rgb(17 17 17 / 0.18);
+}
