@@ -1,4 +1,5 @@
 import { Wordmark } from '@/components/ui/Brand';
+import { OnlineToggle } from '@/features/offline/ConnectivityUI';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { AlertTriangle, Bell, CalendarDays, Check, ClipboardCheck, Clock, Compass, Info, ListChecks, MapPin, X } from 'lucide-react';
@@ -28,7 +29,10 @@ function Greeting({ alertsCount = 0, children }: { alertsCount?: number; childre
   const navigate = useNavigate();
   return (
     <header className="flp-band px-4 pb-6 pt-4 text-white">
-      <Wordmark tone="white" size="sm" className="mb-3" />
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <Wordmark tone="white" size="sm" />
+        <OnlineToggle className="p-0.5 text-xs" />
+      </div>
       <div className="flex items-center gap-3">
         <Avatar name={user.name} />
         <div className="min-w-0 flex-1">

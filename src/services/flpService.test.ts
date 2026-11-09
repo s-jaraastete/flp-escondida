@@ -8,6 +8,7 @@ import {
   decideBooking,
   occupancy,
   rescheduleBooking,
+  setFlpActivityId,
   submitVerification,
   validateSlot,
   slotHasStarted,
@@ -179,5 +180,31 @@ describe('verificación', () => {
     expect(after.completed).toBe(before.completed + 1);
     expect(after.actionsOpen).toBe(before.actionsOpen + 1);
     expect(r.value.data.bookings.find((b) => b.id === booking.id)?.status).toBe('completada');
+  });
+
+  it('guarda el cierre post-visita y permite vincular el ID de FLP después', () => {
+    const d = buildSeed();
+    const booking = d.bookings.find(
+      (b) => b.userId === USER && b.status === 'confirmada' && slotHasStarted(d.slots.find((s) => s.id === b.slotId)!),
+    )!;
+    const answers = VERIFICATION_QUESTIONS.map((q) => ({ questionId: q.id, response: 'SI' as Answer, comment: '', evidence: [], actionRequired: false }));
+    const r = submitVerification(d, {
+      bookingId: booking.id,
+      userId: USER,
+      contractorObserved: true,
+      answers,
+      actions: [],
+      postVisit: { flpActivityId: '', eventProposal: 'ninguno', eventId: 'X', immediateActions: ' Se detuvo la tarea ', followUp: '' },
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const v = r.value.verification;
+    expect(v.postVisit?.immediateActions).toBe('Se detuvo la tarea');
+    expect(v.postVisit?.eventId).toBe(''); // sin evento: no guarda ID de evento
+    expect(setFlpActivityId(r.value.data, v.id, 'cco-123', USER).ok).toBe(false); // formato inválido
+    expect(setFlpActivityId(r.value.data, v.id, 'CCO-2026-11-4068392', PLANNER).ok).toBe(false); // otra persona
+    const linked = setFlpActivityId(r.value.data, v.id, 'cco-2026-11-4068392', USER);
+    expect(linked.ok).toBe(true);
+    if (linked.ok) expect(linked.value.verifications.find((x) => x.id === v.id)?.postVisit?.flpActivityId).toBe('CCO-2026-11-4068392');
   });
 });

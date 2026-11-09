@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react';
-import { CircleAlert, ClipboardCheck, Crosshair, FileImage, Lock, Paperclip, Radio, Trash2 } from 'lucide-react';
-import type { Answer, Verification, VerificationAnswer } from '@/types';
-import { ACTION_OWNERS, VERIFICATION_QUESTIONS } from '@/data/catalogs';
+import { CircleAlert, ClipboardCheck, Crosshair, FileImage, Lock, MessageCircleQuestion, Paperclip, Radio, Send, Trash2 } from 'lucide-react';
+import type { Answer, PostVisit, Verification, VerificationAnswer } from '@/types';
+import { ACTION_OWNERS, ACTIVITY_TYPES, ENGAGEMENT_QUESTIONS, EVENT_PROPOSALS, VERIFICATION_QUESTIONS } from '@/data/catalogs';
 import { AnswerToggle, Button, ProgressBar } from '@/components/ui/primitives';
 import { TypeBadge } from '@/components/ui/status';
 import { useData } from '@/contexts/DataContext';
-import { submitVerification, validateVerification, type ActionDraft } from '@/services/flpService';
+import { FLP_ID_PATTERN, submitVerification, validateVerification, type ActionDraft } from '@/services/flpService';
 import type { BookingView } from '@/services/selectors';
 import { addDaysISO, capitalize, fmtLong, todayISO } from '@/utils/date';
 import { cx } from '@/utils/misc';
@@ -28,6 +28,9 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
   );
   const [actions, setActions] = useState<Record<string, ActionDraft>>({});
   const [contractor, setContractor] = useState<'yes' | 'no'>('yes');
+  const [post, setPost] = useState<PostVisit>({ flpActivityId: '', eventProposal: 'ninguno', eventId: '', immediateActions: '', followUp: '' });
+  const patchPost = (patch: Partial<PostVisit>) => setPost((p) => ({ ...p, ...patch }));
+  const flpType = ACTIVITY_TYPES[slot.activityType];
   const [errors, setErrors] = useState<string[]>([]);
   const errRef = useRef<HTMLDivElement>(null);
 
@@ -45,8 +48,10 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
   const patchAction = (qid: string, patch: Partial<ActionDraft>) => setActions((m) => ({ ...m, [qid]: { ...m[qid], ...patch } }));
 
   const submit = () => {
-    const input = { bookingId: booking.id, userId: booking.userId, contractorObserved: contractor === 'yes', answers, actions: Object.values(actions) };
+    const input = { bookingId: booking.id, userId: booking.userId, contractorObserved: contractor === 'yes', answers, actions: Object.values(actions), postVisit: post };
     const errs = validateVerification(data, input);
+    const flpId = post.flpActivityId.trim();
+    if (flpId && !FLP_ID_PATTERN.test(flpId)) errs.push(`ID actividad FLP: formato no válido (ejemplo: ${flpType.flp}-2026-11-4068392). Puedes dejarlo vacío y agregarlo después.`);
     setErrors(errs);
     if (errs.length) {
       window.setTimeout(() => errRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 20);
@@ -61,7 +66,7 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
       {/* Encabezado de la actividad */}
       <section className={cx('rounded-2xl bg-ink p-4 text-white', !mobile && 'p-5')}>
         <div className="flex flex-wrap items-center gap-2">
-          <TypeBadge type={slot.activityType} />
+          <TypeBadge type={slot.activityType} withFlp />
           <span className="text-xs text-white/60">{capitalize(fmtLong(slot.date))} · {slot.start}–{slot.end}</span>
         </div>
         <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-white/50">Nombre de la actividad</p>
@@ -73,7 +78,10 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
           </div>
           <div>
             <dt className="text-xs text-white/50">Tipo de verificación</dt>
-            <dd className="font-medium">{slot.activityType === 'OVCC' ? 'OVCC — Verificación de controles críticos' : 'CTP — Liderazgo en terreno'}</dd>
+            <dd className="font-medium">
+              {flpType.label} — {flpType.name}
+              <span className="block text-xs font-normal text-white/60">En FLP: {flpType.flp} · {flpType.flpName}</span>
+            </dd>
           </div>
           <div>
             <dt className="text-xs text-white/50">Riesgo material</dt>
@@ -101,6 +109,22 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
             {answered}/{answers.length}
           </span>
         </div>
+      </section>
+
+      {/* Las 3 preguntas de engagement de FLP */}
+      <section className="card border-brand/30 bg-brand-50/40 p-4">
+        <p className="flex items-center gap-2 text-sm font-bold text-brand-700">
+          <MessageCircleQuestion className="size-4" aria-hidden /> Antes de verificar: conversa con el equipo
+        </p>
+        <p className="mt-1 text-xs text-graphite">Usa las 3 preguntas de engagement de FLP para explorar el entendimiento de los riesgos antes de revisar los controles específicos.</p>
+        <ol className="mt-2 grid gap-1.5 text-sm font-medium text-ink">
+          {ENGAGEMENT_QUESTIONS.map((q, i) => (
+            <li key={q} className="flex gap-2">
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand text-[11px] font-bold text-white">{i + 1}</span>
+              {q}
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* Preguntas */}
@@ -212,6 +236,36 @@ export function VerificationForm({ booking, onDone, mobile }: { booking: Booking
       <section className="card flex items-center justify-between gap-3 p-4">
         <span className="text-sm font-medium text-graphite">¿La tarea observada era realizada por una empresa contratista?</span>
         <AnswerToggle ariaLabel="Tarea realizada por contratista" value={contractor} options={YESNO} large={mobile} onChange={setContractor} />
+      </section>
+
+      {/* Cierre post-visita: columnas "Post visita de terreno" de la planilla + puente con FLP */}
+      <section className="card p-4" aria-labelledby="post-t">
+        <p id="post-t" className="flex items-center gap-2 text-sm font-bold text-ink">
+          <Send className="size-4 text-brand" aria-hidden /> Cierre post-visita y registro en FLP
+        </p>
+        <p className="mt-1 text-xs text-muted">
+          Si ya cargaste la actividad en FLP como <strong>{flpType.flp}</strong>, ingresa su ID. Si no, déjalo vacío: la visita queda como <em>pendiente de registro en FLP</em> y puedes vincularla después.
+        </p>
+        <div className={cx('mt-3 grid gap-3', !mobile && 'sm:grid-cols-2')}>
+          <div>
+            <label className="label" htmlFor="pv-flp">ID actividad FLP</label>
+            <input id="pv-flp" className="input font-mono uppercase" placeholder={`${flpType.flp}-2026-11-4068392`} value={post.flpActivityId} maxLength={30} onChange={(e) => patchPost({ flpActivityId: e.target.value })} />
+          </div>
+          <div>
+            <span className="label">Propuesta de evento (Hz / LM)</span>
+            <AnswerToggle ariaLabel="Propuesta de evento" value={post.eventProposal} options={EVENT_PROPOSALS} onChange={(v) => patchPost({ eventProposal: v })} />
+          </div>
+          {post.eventProposal !== 'ninguno' && (
+            <div>
+              <label className="label" htmlFor="pv-ev">ID evento {post.eventProposal}</label>
+              <input id="pv-ev" className="input font-mono" placeholder="Opcional" value={post.eventId} maxLength={30} onChange={(e) => patchPost({ eventId: e.target.value })} />
+            </div>
+          )}
+        </div>
+        <label className="label mt-3" htmlFor="pv-ia">Acciones inmediatas</label>
+        <textarea id="pv-ia" className="input min-h-14" maxLength={400} placeholder="Qué se corrigió o detuvo en el momento (opcional)" value={post.immediateActions} onChange={(e) => patchPost({ immediateActions: e.target.value })} />
+        <label className="label mt-3" htmlFor="pv-fu">Oportunidades para seguimiento de la actividad y/o área</label>
+        <textarea id="pv-fu" className="input min-h-14" maxLength={400} placeholder="Opcional" value={post.followUp} onChange={(e) => patchPost({ followUp: e.target.value })} />
       </section>
 
       {errors.length > 0 && (

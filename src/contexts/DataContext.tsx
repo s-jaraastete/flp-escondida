@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import type { FlpData, Result } from '@/types';
 import { DATA_KEY, loadData, resetData, saveData } from '@/services/storage';
 import { useToast } from './ToastContext';
+import { useConnectivity } from './ConnectivityContext';
 
 interface DataApi {
   data: FlpData;
@@ -17,6 +18,16 @@ const DataContext = createContext<DataApi | null>(null);
 export function DataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<FlpData>(() => loadData());
   const toast = useToast();
+  const { online, enqueue } = useConnectivity();
+  /** Sin conexión: se guarda igual en el dispositivo y queda en cola para sincronizar. */
+  const notify = useCallback(
+    (message: string) => {
+      if (online) return toast.success(message);
+      enqueue(message);
+      toast.success(`${message} Guardado en el dispositivo: se sincronizará al recuperar señal.`);
+    },
+    [online, enqueue, toast],
+  );
 
   // Sincroniza entre pestañas (p. ej. web en una pestaña y app móvil en otra).
   useEffect(() => {
@@ -45,10 +56,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
         return false;
       }
       persist(r.value);
-      if (!opts?.silent) toast.success(r.message);
+      if (!opts?.silent) notify(r.message);
+      else if (!online) enqueue(r.message);
       return true;
     },
-    [persist, toast],
+    [persist, toast, notify, online, enqueue],
   );
 
   const commitWith = useCallback(
@@ -58,10 +70,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
         return null;
       }
       persist(r.value.data);
-      toast.success(r.message);
+      notify(r.message);
       return r.value;
     },
-    [persist, toast],
+    [persist, toast, notify],
   );
 
   const reset = useCallback(() => {

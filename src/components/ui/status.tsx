@@ -44,8 +44,15 @@ export function ActionBadge({ action }: { action: ActionPlan }) {
   return <Badge tone="warning" dot>Abierta</Badge>;
 }
 
-export function TypeBadge({ type }: { type: ActivityType }) {
-  return <Badge tone={type === 'OVCC' ? 'brand' : 'dark'}>{type}</Badge>;
+const FLP_EQUIVALENT: Record<ActivityType, string> = { OVCC: 'CCO', CTP: 'PTC' };
+
+/** Tipo de actividad. withFlp muestra además su equivalente en FLP (OVCC · CCO / CTP · PTC). */
+export function TypeBadge({ type, withFlp }: { type: ActivityType; withFlp?: boolean }) {
+  return (
+    <span title={`Se registra en FLP como ${FLP_EQUIVALENT[type]}`}>
+      <Badge tone={type === 'OVCC' ? 'brand' : 'dark'}>{withFlp ? `${type} · ${FLP_EQUIVALENT[type]}` : type}</Badge>
+    </span>
+  );
 }
 
 export function AreaBadge({ area }: { area: Area }) {

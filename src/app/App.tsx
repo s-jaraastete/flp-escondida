@@ -1,6 +1,7 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router';
 import { ToastProvider } from '@/contexts/ToastContext';
 import { DataProvider } from '@/contexts/DataContext';
+import { ConnectivityProvider } from '@/contexts/ConnectivityContext';
 import { SessionProvider } from '@/contexts/SessionContext';
 import { RequireAuth, RoleGate } from './guards';
 import Landing from '@/pages/shared/Landing';
@@ -42,6 +43,7 @@ const M = 'mobile' as const;
 export default function App() {
   return (
     <ToastProvider>
+      <ConnectivityProvider>
       <DataProvider>
         <SessionProvider>
           <HashRouter>
@@ -105,6 +107,7 @@ export default function App() {
           </HashRouter>
         </SessionProvider>
       </DataProvider>
+      </ConnectivityProvider>
     </ToastProvider>
   );
 }

@@ -13,6 +13,7 @@ import { cancelBooking, findBooking, slotHasStarted } from '@/services/flpServic
 import { bookingView } from '@/services/selectors';
 import { SlotSummary } from '@/features/slots/SlotSummary';
 import { PrecheckEditor } from '@/features/booking/PrecheckEditor';
+import { FlpRegistryCard } from '@/features/flp/FlpRegistryCard';
 import { fmtDateTime } from '@/utils/date';
 
 export default function MobileVisitDetail() {
@@ -56,6 +57,7 @@ export default function MobileVisitDetail() {
               {v.answers.filter((a) => a.response === 'NO').length} hallazgo(s) · {data.actions.filter((a) => a.verificationId === v.id).length} acción(es)
             </p>
           </div>
+          <FlpRegistryCard verification={v} projectName={data.projects.find((p) => p.id === v.projectId)?.name ?? ''} className="mt-3" />
         </MSection>
       )}
 

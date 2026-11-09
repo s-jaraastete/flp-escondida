@@ -86,7 +86,16 @@ export default function MyVisitsPage() {
                       </span>
                     </div>
                   )}
-                  {v && <p className="mt-1 text-xs text-graphite">Verificación registrada · cumplimiento <strong>{v.compliance}%</strong></p>}
+                  {v && (
+                    <p className="mt-1 flex flex-wrap items-center gap-1.5 text-xs text-graphite">
+                      Verificación registrada · cumplimiento <strong>{v.compliance}%</strong>
+                      {v.postVisit?.flpActivityId ? (
+                        <span className="rounded-full bg-success-50 px-2 py-0.5 font-mono font-semibold text-success ring-1 ring-success/30">FLP {v.postVisit.flpActivityId}</span>
+                      ) : (
+                        <span className="rounded-full bg-warning-50 px-2 py-0.5 font-semibold text-warning ring-1 ring-warning/30">Pendiente registro FLP</span>
+                      )}
+                    </p>
+                  )}
                   {b.status === 'rechazada' && <p className="mt-1 text-xs text-danger">Motivo: {b.history.find((h) => h.status === 'rechazada')?.note ?? '—'}</p>}
                 </div>
                 <div className="flex gap-2">

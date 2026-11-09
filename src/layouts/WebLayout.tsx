@@ -25,6 +25,7 @@ import { useData } from '@/contexts/DataContext';
 import { Avatar } from '@/components/ui/primitives';
 import { ConfirmDialog } from '@/components/ui/Modal';
 import { DemoBadge, Wordmark } from '@/components/ui/Brand';
+import { ConnectivityBanner, OnlineToggle } from '@/features/offline/ConnectivityUI';
 import { ROLE_LABEL } from '@/services/flpService';
 import { userBookings } from '@/services/selectors';
 import { ROLE_OPTIONS } from '@/features/auth/useDemoLogin';
@@ -142,7 +143,8 @@ export default function WebLayout() {
         <span className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden />
         <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Field Leadership Program</span>
         <div className="flex-1" />
-        <DemoBadge className="hidden md:inline-flex" />
+        <DemoBadge className="hidden xl:inline-flex" />
+        <OnlineToggle className="hidden sm:inline-flex" />
         {role === 'user' && (
           <button
             onClick={() => navigate('/web/reservar')}
@@ -220,6 +222,8 @@ export default function WebLayout() {
         </div>
       </header>
 
+      <ConnectivityBanner className="sticky top-14 z-20" />
+
       <div className="flex flex-1">
         <aside className="hidden w-[112px] shrink-0 bg-flp-bar lg:block">
           <div className="sticky top-14 h-[calc(100dvh-3.5rem)]">{sidebar}</div>
@@ -241,7 +245,7 @@ export default function WebLayout() {
           {/* Banda naranja con curvas de nivel y título de la página */}
           <div className="flp-band h-44 shrink-0 px-4 pt-7 sm:px-6 lg:px-10">
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
-            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'FLP Escondida'}</h1>
+            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? (location.pathname.startsWith('/web/verificacion') ? 'Verificación en terreno' : 'FLP Escondida')}</h1>
           </div>
 
           <main className="relative -mt-16 mx-auto w-full max-w-[1400px] flex-1 px-3 pb-8 sm:px-5 lg:px-8">

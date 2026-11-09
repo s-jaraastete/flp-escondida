@@ -12,6 +12,8 @@ import { ROLE_LABEL } from '@/services/flpService';
 import { kpis, monthlySeries } from '@/services/selectors';
 import { ROLE_OPTIONS } from '@/features/auth/useDemoLogin';
 import { cx } from '@/utils/misc';
+import { OnlineToggle } from '@/features/offline/ConnectivityUI';
+import { useConnectivity } from '@/contexts/ConnectivityContext';
 
 export default function MobileProfile() {
   const { user, role, switchRole, logout } = useAuth('mobile');
@@ -65,6 +67,8 @@ export default function MobileProfile() {
           <StatPill label="Ocupación" value={`${k.occupancyRate}%`} tone="brand" />
         </div>
       )}
+
+      <ConnectionSection />
 
       <MSection title="Cambiar de perfil">
         <div className="card divide-y divide-line overflow-hidden">
@@ -141,4 +145,33 @@ function Badge({ children }: { children: React.ReactNode }) {
 
 function DemoBadgeInline() {
   return <span className="rounded-full bg-warning-50 px-2.5 py-0.5 text-xs font-bold text-warning">Modo demo</span>;
+}
+
+/** Modo de conexión y registros que esperan sincronización. */
+function ConnectionSection() {
+  const { online, outbox, syncing } = useConnectivity();
+  return (
+    <MSection title="Conexión y sincronización">
+      <div className="card p-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-ink">{online ? (syncing ? 'Sincronizando…' : 'En línea') : 'Sin conexión'}</p>
+            <p className="text-xs text-muted">Usa Offline para trabajar en zonas sin señal.</p>
+          </div>
+          <OnlineToggle />
+        </div>
+        {outbox.length > 0 && (
+          <ul className="mt-3 grid gap-1.5 border-t border-line pt-3">
+            {outbox.map((o) => (
+              <li key={o.id} className="flex items-start gap-2 text-xs text-graphite">
+                <span className="mt-1 size-2 shrink-0 rounded-full bg-warning" aria-hidden />
+                <span className="flex-1">{o.label}</span>
+                <span className="shrink-0 tabular-nums text-muted">{o.at.slice(11, 16)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </MSection>
+  );
 }

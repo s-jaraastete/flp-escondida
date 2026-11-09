@@ -10,6 +10,7 @@ import type {
   Booking,
   BookingStatus,
   FlpData,
+  PostVisit,
   Project,
   RequirementKey,
   Result,
@@ -296,6 +297,7 @@ export interface VerificationInput {
   contractorObserved: boolean;
   answers: VerificationAnswer[];
   actions: ActionDraft[];
+  postVisit?: PostVisit;
 }
 
 export function validateVerification(d: FlpData, input: VerificationInput): string[] {
@@ -324,6 +326,34 @@ export function validateVerification(d: FlpData, input: VerificationInput): stri
   return errors;
 }
 
+export const FLP_ID_PATTERN = /^(CCO|PTC|LA|TTT)-\d{4}-\d{2}-\d{5,8}$/i;
+
+function normalizePostVisit(p: PostVisit): PostVisit {
+  return {
+    flpActivityId: p.flpActivityId.trim().toUpperCase(),
+    eventProposal: p.eventProposal,
+    eventId: p.eventProposal === 'ninguno' ? '' : p.eventId.trim(),
+    immediateActions: p.immediateActions.trim(),
+    followUp: p.followUp.trim(),
+  };
+}
+
+/** Registra (o corrige) el ID de la actividad en FLP después de haberla cargado allá. */
+export function setFlpActivityId(d: FlpData, verificationId: string, flpActivityId: string, userId: string): Result<FlpData> {
+  const v = d.verifications.find((x) => x.id === verificationId);
+  if (!v) return { ok: false, error: 'Verificación no encontrada.' };
+  if (v.userId !== userId) return { ok: false, error: 'Solo quien registró la verificación puede vincularla con FLP.' };
+  const id = flpActivityId.trim().toUpperCase();
+  if (id && !FLP_ID_PATTERN.test(id)) return { ok: false, error: 'Formato de ID FLP no válido. Ejemplo: CCO-2026-11-4068392.' };
+  const base: PostVisit = v.postVisit ?? { flpActivityId: '', eventProposal: 'ninguno', eventId: '', immediateActions: '', followUp: '' };
+  const next: Verification = { ...v, postVisit: { ...base, flpActivityId: id } };
+  return {
+    ok: true,
+    value: { ...d, verifications: d.verifications.map((x) => (x.id === v.id ? next : x)) },
+    message: id ? `Actividad vinculada con FLP (${id}).` : 'Vínculo con FLP eliminado.',
+  };
+}
+
 export function submitVerification(d: FlpData, input: VerificationInput): Result<{ data: FlpData; verification: Verification }> {
   const errors = validateVerification(d, input);
   if (errors.length) return { ok: false, error: errors[0] };
@@ -344,6 +374,7 @@ export function submitVerification(d: FlpData, input: VerificationInput): Result
     answers: input.answers,
     compliance: computeCompliance(input.answers),
     completedAt: at,
+    ...(input.postVisit ? { postVisit: normalizePostVisit(input.postVisit) } : {}),
   };
   const newActions: ActionPlan[] = input.answers
     .filter((a) => a.actionRequired)

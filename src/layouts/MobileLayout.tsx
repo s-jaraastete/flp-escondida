@@ -19,6 +19,7 @@ import { useAuth } from '@/contexts/SessionContext';
 import { useData } from '@/contexts/DataContext';
 import { userBookings } from '@/services/selectors';
 import { cx } from '@/utils/misc';
+import { ConnectivityBanner } from '@/features/offline/ConnectivityUI';
 
 interface Tab {
   to: string;
@@ -70,6 +71,7 @@ export default function MobileLayout() {
 
   return (
     <PhoneFrame scroll={false}>
+      <ConnectivityBanner className="shrink-0 py-1.5 text-xs" />
       <div ref={scrollRef} className="no-scrollbar relative flex-1 overflow-y-auto pb-4">
         <Outlet />
       </div>

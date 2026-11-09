@@ -9,6 +9,7 @@ import { Button, EmptyState } from '@/components/ui/primitives';
 import { findBooking } from '@/services/flpService';
 import { bookingView } from '@/services/selectors';
 import { VerificationForm } from '@/features/verification/VerificationForm';
+import { FlpRegistryCard } from '@/features/flp/FlpRegistryCard';
 
 export default function MobileVerify() {
   const { bookingId = '' } = useParams();
@@ -29,6 +30,7 @@ export default function MobileVerify() {
         <p className="mt-2 text-5xl font-extrabold text-brand">{done.compliance}%</p>
         <p className="text-sm text-muted">de cumplimiento</p>
         <p className="mt-3 text-sm text-graphite">{actions.length ? `Se crearon ${actions.length} plan(es) de acción.` : 'Sin acciones requeridas.'}</p>
+        <FlpRegistryCard verification={done} projectName={data.projects.find((p) => p.id === done.projectId)?.name ?? ''} className="mt-6 w-full" />
         <div className="mt-8 grid w-full gap-2">
           {actions.length > 0 && (
             <Button size="lg" onClick={() => navigate('/app/acciones')}>
