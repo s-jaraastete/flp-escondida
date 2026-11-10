@@ -1,6 +1,6 @@
 {
-  "name": "FLP Escondida — Field Leadership Program",
-  "short_name": "FLP Escondida",
+  "name": "Safety Planner",
+  "short_name": "Safety Planner",
   "description": "Planificación, agendamiento y verificación de liderazgo en terreno (prototipo demo).",
   "lang": "es-CL",
   "start_url": "./app",

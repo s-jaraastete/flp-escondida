@@ -1,4 +1,4 @@
-# FLP Escondida — Field Leadership Program
+# Safety Planner — Field Leadership Program
 
 Prototipo funcional (MVP demostrable) de **planificación, agendamiento y liderazgo en terreno** para el Field Leadership Program de Minera Escondida.
 Un único proyecto React con dos experiencias independientes:

@@ -23,8 +23,8 @@ export default function MobileLogin() {
           <div className="relative mt-10">
             <FlpMark className="size-12" />
             <h1 className="wordmark mt-5 text-4xl leading-none">
-              FLP<br />
-              <span className="text-brand">ESCONDIDA</span>
+              SAFETY<br />
+              <span className="text-brand">PLANNER</span>
             </h1>
             <p className="mt-2 text-sm italic text-white/70">Field Leadership Program · App de terreno</p>
           </div>

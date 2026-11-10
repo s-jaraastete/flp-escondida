@@ -1,5 +1,5 @@
 /*
- * Service worker de FLP Escondida: permite abrir la app sin señal en faena.
+ * Service worker de Safety Planner: permite abrir la app sin señal en faena.
  * - Navegación (cualquier ruta: /web, /app/visitas…): red primero; si no hay red, usa la última versión guardada de index.html.
  * - Archivos estáticos (JS, CSS, imágenes): caché primero y actualización en segundo plano.
  * Los datos de la demo viven en LocalStorage, así que también están disponibles sin conexión.

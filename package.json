@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "FLP Escondida — Prototipo de plataforma web y app móvil para el Field Leadership Program (modo demostración).",
+  "description": "Safety Planner — Prototipo de plataforma web y app móvil para el Field Leadership Program (modo demostración).",
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.json && vite build",

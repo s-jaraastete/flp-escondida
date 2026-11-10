@@ -1,5 +1,5 @@
 /**
- * Modelo de dominio FLP Escondida.
+ * Modelo de dominio Safety Planner.
  * Compartido por la Plataforma Web y la Aplicación Móvil.
  */
 

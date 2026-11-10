@@ -245,8 +245,8 @@ export default function WebLayout() {
         <div className="flex min-w-0 flex-1 flex-col">
           {/* Banda naranja con curvas de nivel y título de la página */}
           <div className="flp-band h-44 shrink-0 px-4 pt-7 sm:px-6 lg:px-10">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma FLP Escondida</p>
-            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'FLP Escondida'}</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/75">Plataforma Safety Planner</p>
+            <h1 className="mt-1 truncate text-3xl font-bold text-white drop-shadow-sm">{current?.label ?? 'Safety Planner'}</h1>
           </div>
 
           <main className="relative -mt-16 mx-auto w-full max-w-[1400px] flex-1 px-3 pb-8 sm:px-5 lg:px-8">

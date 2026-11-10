@@ -34,7 +34,7 @@ export default function Landing() {
               <span className="text-sm font-semibold uppercase tracking-[0.25em] text-white/60">Minera Escondida</span>
             </div>
             <h1 className="text-4xl font-black leading-[1.08] tracking-tight [font-family:var(--font-display)] sm:text-5xl lg:text-[3.25rem]">
-              Sistema de Planificación de Programa de Liderazgo en Terreno <span className="text-brand">(FLP)</span>
+              Safety Planner
             </h1>
             <p className="mt-3 text-xl font-light italic text-white/80 sm:text-2xl">Field Leadership Program</p>
             <p className="mt-4 max-w-xl text-base text-white/70 sm:text-lg">

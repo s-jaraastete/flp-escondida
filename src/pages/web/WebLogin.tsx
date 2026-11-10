@@ -19,7 +19,7 @@ export default function WebLogin() {
             <Monitor className="size-3.5" aria-hidden /> Plataforma Web
           </span>
           <h1 className="wordmark mt-5 text-5xl leading-none">
-            FLP <span className="text-brand">ESCONDIDA</span>
+            SAFETY <span className="text-brand">PLANNER</span>
           </h1>
           <p className="mt-3 max-w-md text-white/70">Planificación, agendamiento y seguimiento del liderazgo en terreno en Mina y Coloso.</p>
           <ul className="mt-10 grid max-w-md gap-4 text-sm text-white/80">
