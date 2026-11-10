@@ -138,7 +138,7 @@ export default function WebLayout() {
         </button>
         <Wordmark size="md" />
         <span className="hidden h-6 w-px bg-white/20 sm:block" aria-hidden />
-        <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Field Leadership Program</span>
+        <span className="hidden truncate text-sm font-medium text-white/80 sm:block">Safety Planner</span>
         <div className="flex-1" />
         <span className="hidden xl:contents">
           <DemoBadge />

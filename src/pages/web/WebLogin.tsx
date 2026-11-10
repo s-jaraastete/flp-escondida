@@ -26,7 +26,7 @@ export default function WebLogin() {
             {[
               { icon: CalendarDays, t: 'Calendario semanal y mensual con cupos en tiempo real' },
               { icon: ShieldCheck, t: 'Requisitos de acceso y seguridad antes de cada visita' },
-              { icon: BarChart3, t: 'Indicadores de cumplimiento y planes de acción' },
+              { icon: BarChart3, t: 'Indicadores de FLP planificado, spot y ausencias' },
             ].map(({ icon: I, t }) => (
               <li key={t} className="flex items-center gap-3">
                 <span className="grid size-9 place-items-center rounded-xl bg-white/10 text-brand">

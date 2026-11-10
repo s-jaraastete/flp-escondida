@@ -1,8 +1,8 @@
 import { Link } from 'react-router';
-import { ArrowRight, BarChart3, CalendarDays, CheckCircle2, ClipboardCheck, Monitor, Smartphone, Users } from 'lucide-react';
+import { ArrowRight, BarChart3, CalendarDays, CheckCircle2, Monitor, Smartphone, Users, Zap } from 'lucide-react';
 import { DemoBadge, FlpMark, Wordmark } from '@/components/ui/Brand';
 
-const FLOW = ['Disponibilidad', 'Programación', 'Reserva', 'Confirmación', 'Actividad FLP', 'Verificación', 'Acciones', 'Seguimiento'];
+const FLOW = ['Programación', 'Reserva', 'Confirmación', 'Visita realizada', 'Registro en FLP', 'FLP spot', 'Reportes'];
 
 export default function Landing() {
   return (
@@ -48,7 +48,7 @@ export default function Landing() {
               icon={Monitor}
               eyebrow="Escritorio"
               title="Ingresar a Plataforma Web"
-              text="Administración, planificación de visitas, calendario, reservas, dashboards y seguimiento de planes de acción."
+              text="Administración, planificación de visitas, calendario, reservas, dashboards de FLP planificado, spot y ausencias."
               features={[
                 { icon: BarChart3, label: 'Dashboards' },
                 { icon: CalendarDays, label: 'Calendario' },
@@ -60,11 +60,11 @@ export default function Landing() {
               icon={Smartphone}
               eyebrow="Terreno"
               title="Ingresar a Aplicación Móvil"
-              text="Explora proyectos, reserva visitas, revisa requisitos y registra verificaciones y hallazgos desde terreno."
+              text="Explora proyectos, reserva visitas, revisa requisitos, marca tus visitas y registra FLP spot desde terreno."
               features={[
                 { icon: CalendarDays, label: 'Reservas' },
-                { icon: ClipboardCheck, label: 'Verificación' },
-                { icon: CheckCircle2, label: 'Acciones' },
+                { icon: CheckCircle2, label: 'Visita realizada' },
+                { icon: Zap, label: 'FLP spot' },
               ]}
               accent
             />
