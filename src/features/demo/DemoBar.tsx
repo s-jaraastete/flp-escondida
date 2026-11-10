@@ -10,7 +10,7 @@ import { ROLE_SHORT, TOUR_FLOWS, type TourFlow } from './tour';
 import { useTour } from './TourContext';
 import { TextSizeToggle } from '@/features/a11y/TextSize';
 
-const ROLES: Role[] = ['admin', 'planner', 'user'];
+const ROLES: Role[] = ['planner', 'user', 'admin'];
 
 /**
  * Franja de demostración (como en Cosecheros): perfil, web/móvil, recorridos y restablecer.
@@ -128,7 +128,7 @@ export function DemoBar() {
               </button>
             </div>
             <ol className="scroll-thin flex-1 overflow-y-auto px-4">
-              {TOUR_FLOWS.map((f) => {
+              {TOUR_FLOWS.map((f, i) => {
                 const ok = done.has(f.id);
                 return (
                   <li key={f.id} className="grid grid-cols-[28px_1fr_auto] items-start gap-3 border-b border-line py-3">
@@ -138,7 +138,7 @@ export function DemoBar() {
                         ok ? 'border-success bg-success text-white' : 'border-line text-muted',
                       )}
                     >
-                      {ok ? <Check className="size-3.5" strokeWidth={3} aria-label="Completado" /> : f.id}
+                      {ok ? <Check className="size-3.5" strokeWidth={3} aria-label="Completado" /> : i + 1}
                     </span>
                     <div className="min-w-0">
                       <p className={cx('text-sm font-bold text-ink', ok && 'text-muted line-through decoration-muted/60')}>{f.title}</p>
